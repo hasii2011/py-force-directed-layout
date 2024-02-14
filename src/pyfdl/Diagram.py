@@ -210,6 +210,8 @@ class Diagram:
         for n in self._nodes:
             node: Node = cast(Node, n)
             node.location -= midPoint
+            node.location.x += node.size.width
+            node.location.y += node.size.height
 
     def _determineRepulsionBetweenNodes(self, metaNode: Node) -> Vector:
 
