@@ -1,4 +1,5 @@
 
+from typing import Any
 from typing import Callable
 from typing import List
 from typing import NewType
@@ -22,3 +23,8 @@ class LayoutStatus:
 
 
 LayoutStatusCallback = Callable[[LayoutStatus], None]
+
+DrawingContext = Any
+"""
+Purposely set to Any to avoid tying to a particular toolkit
+"""

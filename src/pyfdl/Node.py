@@ -1,12 +1,15 @@
-from abc import ABC
-from abc import abstractmethod
+
 from typing import TYPE_CHECKING
 from typing import cast
+
 
 from logging import Logger
 from logging import getLogger
 
-from wx import DC
+from abc import ABC
+from abc import abstractmethod
+
+from pyfdl.LayoutTypes import DrawingContext
 
 from pyfdl.Point import Point
 from pyfdl.Size import Size
@@ -34,24 +37,24 @@ class Node(ABC):
     def size(self) -> Size:
         pass
 
-    def drawConnector(self, dc: DC, sourcePoint: Point, destinationPoint: Point):
+    def drawConnector(self, dc: DrawingContext, sourcePoint: Point, destinationPoint: Point):
         """
         Draws a connector between this node and the specified child node
         The source and destination coordinates are also specified.
 
         Args:
-            dc:                 "device context” onto which graphics and text can be drawn.
+            dc:                "Drawing Context” onto which graphics and text can be drawn.
             sourcePoint:        Source coordinate
             destinationPoint:   Destination coordinate.
         """
         dc.DrawLine(x1=sourcePoint.x, y1=sourcePoint.y, x2=destinationPoint.x, y2=destinationPoint.y)
 
     @abstractmethod
-    def drawNode(self, dc: DC):
+    def drawNode(self, dc: DrawingContext):
         """
         Draws the node
         Args:
-            dc:     The device context to draw om
+            dc:     The drawing context to draw n
         """
         pass
 

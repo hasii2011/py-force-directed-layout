@@ -12,9 +12,6 @@ from pyfdl.Vector import Vector
 @dataclass
 class NodeLayoutInformation:
 
-    # public Node Node;
-    # public Vector Velocity;
-    # public Point NextPosition;
     node:         Node
     """
     reference to the node in the simulation
