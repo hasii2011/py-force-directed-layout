@@ -1,6 +1,7 @@
 
 from logging import Logger
 from logging import getLogger
+from typing import cast
 
 from wx import App
 from wx import CommandEvent
@@ -12,6 +13,9 @@ from wx import Menu
 from wx import MenuBar
 
 from wx import NewIdRef as wxNewIdRef
+from wx import PD_APP_MODAL
+from wx import PD_ELAPSED_TIME
+from wx import ProgressDialog
 from wx import Yield as wxYield
 
 from wx.lib.sized_controls import SizedFrame
@@ -60,12 +64,16 @@ class DemoLayout(App):
         self._topLevelFrame.SetAutoLayout(True)
         self._topLevelFrame.Show(True)
 
+        self._layoutProgressDialog: ProgressDialog = cast(ProgressDialog, None)
+
         return True
 
     # noinspection PyUnusedLocal
     def onArrange(self, event: CommandEvent):
         self._diagramFrame.diagram.arrange(statusCallback=self._layoutStatusCallBack)
         self._diagramFrame.Refresh()
+
+        self._layoutProgressDialog.Destroy()
 
     def _createApplicationMenuBar(self):
         menuBar:  MenuBar = MenuBar()
@@ -92,12 +100,18 @@ class DemoLayout(App):
 
     def _layoutStatusCallBack(self, status: LayoutStatus):
 
+        if self._layoutProgressDialog is None:
+            self._layoutProgressDialog = ProgressDialog('Arranging', 'Starting', parent=None, style=PD_APP_MODAL | PD_ELAPSED_TIME)
+            self._layoutProgressDialog.SetRange(status.maxIterations)
+
         statusMsg: str = (
-            f'totalDisplacement: {status.totalDisplacement: .3f} '
-            f'iterations: {status.iterations} '
-            f'stopCount: {status.stopCount} '
+            f'totalDisplacement: {status.totalDisplacement: .3f}\n'
+            f'iterations: {status.iterations}\n'
+            f'stopCount: {status.stopCount}\n'
         )
-        self.logger.info(f'{statusMsg}')
+        # self.logger.info(f'{statusMsg}')
+        self._layoutProgressDialog.Update(status.iterations, statusMsg)
+
         self._diagramFrame.Refresh()
         wxYield()
 
