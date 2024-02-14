@@ -37,7 +37,8 @@ from pyfdl.Diagram import Diagram
 from pyfdl.LayoutTypes import Nodes
 from pyfdl.Node import Node
 from pyfdl.Point import Point
-from pyfdl.SpotNode import SpotNode
+
+from tests.demo.SpotNode import SpotNode
 
 DEFAULT_WIDTH = 3000
 A4_FACTOR:    float = 1.41
@@ -46,9 +47,9 @@ PIXELS_PER_UNIT_X: int = 20
 PIXELS_PER_UNIT_Y: int = 20
 
 MIN_X: int = 10
-MAX_X: int = 600
+MAX_X: int = 800
 MIN_Y: int = 20
-MAX_Y: int = 500
+MAX_Y: int = 600
 
 
 class DiagramFrame(ScrolledWindow):
