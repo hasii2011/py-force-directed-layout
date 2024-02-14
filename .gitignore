@@ -10,3 +10,4 @@ dist/
 /.mypy_cache
 .envrc
 .python-version
+pyfdl.egg-info/

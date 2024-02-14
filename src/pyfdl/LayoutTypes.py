@@ -18,6 +18,7 @@ class LayoutStatus:
     totalDisplacement: float = 0.0
     iterations:        int   = 0
     stopCount:         int   = 0
+    maxIterations:     int   = 0
 
 
-LayoutStatusCallback = Callable[[LayoutStatus], None]        #
+LayoutStatusCallback = Callable[[LayoutStatus], None]

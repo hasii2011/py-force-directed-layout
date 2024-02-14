@@ -27,9 +27,9 @@ from pyfdl.NodeLayoutInformation import NodeLayoutInformation
 from pyfdl.NodeLayoutInformation import NodeLayoutInformationList
 
 MIN_RANDOM_X: int = 10     # TODO Configurable
-MAX_RANDOM_X: int = 60      # TODO Configurable
+MAX_RANDOM_X: int = 60     # TODO Configurable
 MIN_RANDOM_Y: int = 10     # TODO Configurable
-MAX_RANDOM_Y: int = 60      # TODO Configurable
+MAX_RANDOM_Y: int = 60     # TODO Configurable
 
 ORIGIN_POINT: Point = Point(0, 0)
 
@@ -197,6 +197,8 @@ class Diagram:
             layoutStatus.totalDisplacement = totalDisplacement
             layoutStatus.stopCount         = stopCount
             layoutStatus.iterations        = iterations
+            layoutStatus.maxIterations     = maxIterations
+
             statusCallback(layoutStatus)
         self._adjustNodes()
 

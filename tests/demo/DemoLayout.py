@@ -74,9 +74,17 @@ class DemoLayout(App):
         fileMenu.AppendSeparator()
         fileMenu.Append(ID_EXIT, '&Quit', "Quit Application")
 
-        fileMenu.Append(self._arrangeId, 'Arrange', 'Arrange the diagram')
+        fileMenu.Append(id=self._arrangeId, item='&Arrange\tCtrl-A', helpString='Arrange the diagram')
 
         menuBar.Append(fileMenu, 'File')
+
+        # entryArrange1: AcceleratorEntry = AcceleratorEntry(flags=ACCEL_ALT, keyCode=ord('a'), cmd=self._arrangeId)
+        # entryArrange2: AcceleratorEntry = AcceleratorEntry(flags=ACCEL_ALT, keyCode=ord('A'), cmd=self._arrangeId)
+        #
+        # acceleratorTable: AcceleratorTable = AcceleratorTable([entryArrange1, entryArrange2])
+        #
+        # self.logger.info(f'{acceleratorTable.IsOk()=}')
+        # self._topLevelFrame.SetAcceleratorTable(acceleratorTable)
 
         self._topLevelFrame.SetMenuBar(menuBar)
 
