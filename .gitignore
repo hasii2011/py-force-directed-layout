@@ -1,0 +1,12 @@
+.idea/
+__pycache__/
+.DS_Store
+/html/
+build/
+dist/
+/pyenv-3.11.5/
+/site/
+/docs/
+/.mypy_cache
+.envrc
+.python-version
