@@ -33,7 +33,7 @@ from wx import Window
 # noinspection PyUnresolvedReferences
 from wx.core import PenStyle
 
-from pyfdl.Diagram import Diagram
+from pyfdl.LayoutEngine import LayoutEngine
 from pyfdl.LayoutTypes import Nodes
 from pyfdl.Node import Node
 from pyfdl.Point import Point
@@ -60,9 +60,9 @@ class DiagramFrame(ScrolledWindow):
 
         self.logger: Logger = getLogger(__name__)
 
-        self._diagram: Diagram = Diagram()
+        self._layoutEngine: LayoutEngine = LayoutEngine()
 
-        self._generateRandomDiagram(diagram=self._diagram)
+        self._generateRandomDiagram(layoutEngine=self._layoutEngine)
         # self._generateFixedDiagram(diagram=self._diagram)
         self.maxWidth:  int  = DEFAULT_WIDTH
         self.maxHeight: int = int(self.maxWidth / A4_FACTOR)  # 1.41 is for A4 support
@@ -87,20 +87,20 @@ class DiagramFrame(ScrolledWindow):
         self.onPaint(cast(PaintEvent, None))
 
     @property
-    def diagram(self) -> Diagram:
+    def layoutEngine(self) -> LayoutEngine:
         """
         Returns:  The diagram associated with this frame
         """
-        return self._diagram
+        return self._layoutEngine
 
-    @diagram.setter
-    def diagram(self, diagram: Diagram):
+    @layoutEngine.setter
+    def layoutEngine(self, layoutEngine: LayoutEngine):
         """
-        Associates a new diagram with the frame
+        Associates a new layout engine with the frame
         Args:
-            diagram:
+            layoutEngine:
         """
-        self._diagram = diagram
+        self._layoutEngine = layoutEngine
 
     # noinspection PyUnusedLocal
     def onPaint(self, event: PaintEvent):
@@ -117,7 +117,7 @@ class DiagramFrame(ScrolledWindow):
 
         self._drawGrid(memDC=mem, width=w, height=h, startX=x, startY=y)
 
-        nodes: Nodes = self._diagram.nodes
+        nodes: Nodes = self._layoutEngine.nodes
         for n in nodes:
             parentNode: Node = cast(Node, n)
             parentNode.drawNode(mem)
@@ -154,7 +154,7 @@ class DiagramFrame(ScrolledWindow):
         """
         dc: MemoryDC = MemoryDC()
         bm = self._workingBitmap
-        # cache the bitmap, to avoid creating a new at each refresh.
+        # cache the bitmap, to avoid creating a new one at each refresh.
         # only recreate it if the size of the window has changed
         if (bm.GetWidth(), bm.GetHeight()) != (w, h):
             bm = self._workingBitmap = Bitmap(w, h)
@@ -206,7 +206,7 @@ class DiagramFrame(ScrolledWindow):
 
         return pen
 
-    def _generateRandomDiagram(self, diagram: Diagram):
+    def _generateRandomDiagram(self, layoutEngine: LayoutEngine):
 
         bluePen:  Pen = Pen(colour=BLUE, width=1,  style=PENSTYLE_SOLID)
         blackPen: Pen = Pen(colour=BLACK, width=1, style=PENSTYLE_SOLID)
@@ -214,44 +214,44 @@ class DiagramFrame(ScrolledWindow):
         parentNode: SpotNode = SpotNode(stroke=blackPen, fill=BLACK_BRUSH)
         parentNode.location  = Point(x=randint(1, 600), y=randint(1, 500))
 
-        diagram.addNode(parentNode)
+        layoutEngine.addNode(parentNode)
 
         childrenCount: int = randint(1, 5)
         for x in range(childrenCount):
             childNode: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
             childNode.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
             parentNode.addChild(childNode)
-            diagram.addNode(childNode)
+            layoutEngine.addNode(childNode)
 
             grandChildrenCount: int = randint(0, 5)
             for y in range(grandChildrenCount):
                 grandChildNode: SpotNode = SpotNode(stroke=GREEN_PEN, fill=GREEN_BRUSH)
                 grandChildNode.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
                 childNode.addChild(grandChildNode)
-                diagram.addNode(grandChildNode)
+                layoutEngine.addNode(grandChildNode)
 
                 greatGrandChildrenCount: int = randint(0, 5)
                 for z in range(greatGrandChildrenCount):
                     greatGrandChildNode: SpotNode = SpotNode(stroke=RED_PEN, fill=RED_BRUSH)
                     greatGrandChildNode.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
                     grandChildNode.addChild(greatGrandChildNode)
-                    diagram.addNode(grandChildNode)
+                    layoutEngine.addNode(grandChildNode)
 
-    def _generateFixedDiagram(self, diagram: Diagram):
+    def _generateFixedDiagram(self, layoutEngine: LayoutEngine):
 
         blackPen: Pen = Pen(colour=BLACK, width=1, style=PENSTYLE_SOLID)
 
         parentNode: SpotNode = SpotNode(stroke=blackPen, fill=BLACK_BRUSH)
         parentNode.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-        parentNode = self._generateParentHierarchy(parentNode=parentNode, diagram=diagram)
-        diagram.addNode(parentNode)
+        parentNode = self._generateParentHierarchy(parentNode=parentNode, layoutEngine=layoutEngine)
+        layoutEngine.addNode(parentNode)
 
         parentNode2: SpotNode = SpotNode(stroke=blackPen, fill=BLACK_BRUSH)
         parentNode2.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-        parentNode2 = self._generateParentHierarchy(parentNode=parentNode2, diagram=diagram)
-        diagram.addNode(parentNode2)
+        parentNode2 = self._generateParentHierarchy(parentNode=parentNode2, layoutEngine=layoutEngine)
+        layoutEngine.addNode(parentNode2)
 
-    def _generateParentHierarchy(self, diagram: Diagram, parentNode: SpotNode) -> SpotNode:
+    def _generateParentHierarchy(self, layoutEngine: LayoutEngine, parentNode: SpotNode) -> SpotNode:
 
         bluePen:  Pen = Pen(colour=BLUE, width=1,  style=PENSTYLE_SOLID)
         childNode1: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
@@ -262,9 +262,9 @@ class DiagramFrame(ScrolledWindow):
         childNode2.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
         childNode3.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
 
-        diagram.addNode(childNode1)
-        diagram.addNode(childNode2)
-        diagram.addNode(childNode3)
+        layoutEngine.addNode(childNode1)
+        layoutEngine.addNode(childNode2)
+        layoutEngine.addNode(childNode3)
 
         parentNode.addChild(childNode1)
         parentNode.addChild(childNode2)

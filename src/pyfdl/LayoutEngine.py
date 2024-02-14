@@ -38,7 +38,7 @@ DEFAULT_SPRING_LENGTH:  int = 100    # TODO Configurable
 DEFAULT_MAX_ITERATIONS: int = 500    # TODO Configurable
 
 
-class Diagram:
+class LayoutEngine:
     """
     Represents a simple diagram consisting of nodes and connections, implementing a
     force-directed algorithm for automatically arranging the nodes.
@@ -98,7 +98,7 @@ class Diagram:
 
         if node not in self._nodes:
             self._nodes.append(node)
-            node.diagram = self
+            node.layoutEngine = self
             return True
         else:
             return False
@@ -112,7 +112,7 @@ class Diagram:
 
         Returns:  True if the node belonged to the diagram.
         """
-        node.diagram = cast(Diagram, None)
+        node.layoutEngine = cast(LayoutEngine, None)
 
         for otherNode in self._nodes:
             if otherNode != node and node in otherNode.connections:
@@ -167,7 +167,7 @@ class Diagram:
                 #
                 # express the node's current position as a vector, relative to the origin
                 #
-                magnitude:       int    = Diagram.calculateDistance(a=ORIGIN_POINT, b=metaNode.location)
+                magnitude:       int    = LayoutEngine.calculateDistance(a=ORIGIN_POINT, b=metaNode.location)
                 direction:       float  = self._getBearingAngle(start=ORIGIN_POINT, end=metaNode.location)
                 currentPosition: Vector = Vector(magnitude=magnitude, direction=direction)
 
@@ -182,7 +182,7 @@ class Diagram:
             # move nodes to resultant positions (and calculate total displacement)
             for currentMeta in layoutList:
                 metaNode = currentMeta.node
-                totalDisplacement += Diagram.calculateDistance(a=metaNode.location, b=currentMeta.nextPosition)
+                totalDisplacement += LayoutEngine.calculateDistance(a=metaNode.location, b=currentMeta.nextPosition)
                 metaNode.location = currentMeta.nextPosition
 
             iterations += 1
@@ -276,9 +276,9 @@ class Diagram:
 
         Returns:  A Vector representing the attraction force.
         """
-        proximity: int = max(Diagram.calculateDistance(x.location, y.location), 1)
+        proximity: int = max(LayoutEngine.calculateDistance(x.location, y.location), 1)
         # Hooke's Law: F = -kx
-        force: float = Diagram.ATTRACTION_CONSTANT * max(proximity - springLength, 0)
+        force: float = LayoutEngine.ATTRACTION_CONSTANT * max(proximity - springLength, 0)
         angle: float = self._getBearingAngle(start=x.location, end=y.location)
 
         attractionVector: Vector = Vector(magnitude=force, direction=angle)
@@ -314,9 +314,9 @@ class Diagram:
 
         Returns:    A Vector representing the repulsion force.
         """
-        proximity: int = max(Diagram.calculateDistance(x.location, y.location), 1)
+        proximity: int = max(LayoutEngine.calculateDistance(x.location, y.location), 1)
         #  Coulomb's Law: F = k(Qq/r^2)
-        force: float = -(Diagram.REPULSION_CONSTANT / pow(proximity, 2))
+        force: float = -(LayoutEngine.REPULSION_CONSTANT / pow(proximity, 2))
         angle: float = self._getBearingAngle(start=x.location, end=y.location)
 
         vector: Vector = Vector(magnitude=force, direction=angle)
@@ -414,7 +414,7 @@ class Diagram:
 
     def __eq__(self, other) -> bool:
 
-        if isinstance(other, Diagram) is False:
+        if isinstance(other, LayoutEngine) is False:
             return False
 
         return self.id == other.id

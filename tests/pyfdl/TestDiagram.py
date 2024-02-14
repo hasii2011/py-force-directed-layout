@@ -8,9 +8,9 @@ from unittest import main as unitTestMain
 
 from codeallybasic.UnitTestBase import UnitTestBase
 
-from pyfdl.Diagram import DEFAULT_SPRING_LENGTH
-from pyfdl.Diagram import Diagram
-from pyfdl.Diagram import ORIGIN_POINT
+from pyfdl.LayoutEngine import DEFAULT_SPRING_LENGTH
+from pyfdl.LayoutEngine import LayoutEngine
+from pyfdl.LayoutEngine import ORIGIN_POINT
 from pyfdl.Node import Node
 from pyfdl.NodeLayoutInformation import NodeLayoutInformation
 
@@ -45,129 +45,129 @@ class TestDiagram(UnitTestBase):
         super().tearDown()
 
     def testDiagramSame(self):
-        diagram: Diagram = Diagram()
-        doppleGanger: Diagram = diagram
+        layoutEngine: LayoutEngine = LayoutEngine()
+        doppleGanger: LayoutEngine = layoutEngine
 
-        self.assertEqual(diagram, doppleGanger, 'The should be the same')
+        self.assertEqual(layoutEngine, doppleGanger, 'The should be the same')
 
     def testDiagramsNotTheSame(self):
-        diagramA: Diagram = Diagram()
-        diagramB: Diagram = Diagram()
+        layoutEngineA: LayoutEngine = LayoutEngine()
+        layoutEngineB: LayoutEngine = LayoutEngine()
 
-        self.assertNotEqual(diagramA, diagramB, 'These are not the same')
+        self.assertNotEqual(layoutEngineA, layoutEngineB, 'These are not the same')
 
     def testCalculateDistancePositive(self):
 
         metaLocation  = Point(50, 50)
-        magnitude: int = Diagram.calculateDistance(a=ORIGIN_POINT, b=metaLocation)
+        magnitude: int = LayoutEngine.calculateDistance(a=ORIGIN_POINT, b=metaLocation)
 
         self.assertEqual(70, magnitude, 'Magnitude is incorrect')
 
     def testCalculateDistanceNegative(self):
 
         metaLocation  = Point(-50, -50)
-        magnitude: int = Diagram.calculateDistance(a=ORIGIN_POINT, b=metaLocation)
+        magnitude: int = LayoutEngine.calculateDistance(a=ORIGIN_POINT, b=metaLocation)
 
         self.assertEqual(70, magnitude, 'Magnitude is incorrect')
 
     def testBearingAngleDown(self):
-        diagram: Diagram = Diagram()
+        layoutEngine: LayoutEngine = LayoutEngine()
 
         endPoint:   Point = Point(x=100, y=100)
         startPoint: Point = Point(x=100, y=300)
 
         expectedAngle: float = -90.0
-        angle:         float = diagram._getBearingAngle(start=startPoint, end=endPoint)
+        angle:         float = layoutEngine._getBearingAngle(start=startPoint, end=endPoint)
 
         self.assertAlmostEqual(expectedAngle, angle, places=2, msg='Angle not close enough')
 
     def testBearingAngleUp(self):
-        diagram: Diagram = Diagram()
+        layoutEngine: LayoutEngine = LayoutEngine()
 
         startPoint: Point = Point(x=100, y=100)
         endPoint:   Point = Point(x=100, y=300)
 
         expectedAngle: float = 90.0
-        angle:         float = diagram._getBearingAngle(start=startPoint, end=endPoint)
+        angle:         float = layoutEngine._getBearingAngle(start=startPoint, end=endPoint)
 
         self.assertAlmostEqual(expectedAngle, angle, places=2, msg='Angle not close enough')
 
     def testCalculateAttractionForce(self):
 
-        diagram: Diagram = Diagram()
+        layoutEngine: LayoutEngine = LayoutEngine()
 
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
 
         expectedForce:   Vector = Vector(magnitude=46.5000, direction=45.00)
-        attractionForce: Vector = diagram._calculateAttractionForce(x=actingOnNode, y=creatingForceNode, springLength=DEFAULT_SPRING_LENGTH)
+        attractionForce: Vector = layoutEngine._calculateAttractionForce(x=actingOnNode, y=creatingForceNode, springLength=DEFAULT_SPRING_LENGTH)
 
         self.assertEqual(expectedForce, attractionForce, 'Attraction force miscalculation')
 
     def testCalculateAttractionForceInverse(self):
 
-        diagram: Diagram = Diagram()
+        layoutEngine: LayoutEngine = LayoutEngine()
 
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
 
         expectedForce:   Vector = Vector(magnitude=46.5000, direction=225.00)
-        attractionForce: Vector = diagram._calculateAttractionForce(x=creatingForceNode, y=actingOnNode, springLength=DEFAULT_SPRING_LENGTH)
+        attractionForce: Vector = layoutEngine._calculateAttractionForce(x=creatingForceNode, y=actingOnNode, springLength=DEFAULT_SPRING_LENGTH)
 
         self.assertEqual(expectedForce, attractionForce, 'Attraction force miscalculation')
 
     def testCalculateRepulsionForce(self):
-        diagram: Diagram = Diagram()
+        layoutEngine: LayoutEngine = LayoutEngine()
 
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
 
         expectedForce:  Vector = Vector(magnitude=0.03133, direction=45.00)
-        repulsionForce: Vector = diagram._calculateRepulsionForce(x=creatingForceNode, y=actingOnNode)
+        repulsionForce: Vector = layoutEngine._calculateRepulsionForce(x=creatingForceNode, y=actingOnNode)
 
         self.assertEqual(expectedForce, repulsionForce, 'Repulsion force miscalculation')
 
     def testCalculateRepulsionForceInverse(self):
-        diagram: Diagram = Diagram()
+        layoutEngine: LayoutEngine = LayoutEngine()
 
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
 
         expectedForce:  Vector = Vector(magnitude=0.03133, direction=225.00)
-        repulsionForce: Vector = diagram._calculateRepulsionForce(x=actingOnNode, y=creatingForceNode)
+        repulsionForce: Vector = layoutEngine._calculateRepulsionForce(x=actingOnNode, y=creatingForceNode)
 
         self.assertEqual(expectedForce, repulsionForce, 'Repulsion force miscalculation')
 
     def testRemoveNode(self):
 
-        diagram: Diagram = Diagram()
+        layoutEngine: LayoutEngine = LayoutEngine()
 
         inDiagramNode:    FakeNode = FakeNode(location=Point(x=100, y=100), fakeId=100)
         notInDiagramNode: FakeNode = FakeNode(location=Point(x=666, y=666), fakeId=666)
 
-        diagram.addNode(inDiagramNode)
+        layoutEngine.addNode(inDiagramNode)
 
-        removed: bool = diagram.removeNode(notInDiagramNode)
+        removed: bool = layoutEngine.removeNode(notInDiagramNode)
 
         self.assertEqual(False, removed, 'Was not in Diagram')
 
     def testScalePoint(self):
 
-        diagram: Diagram = Diagram()
+        layoutEngine: LayoutEngine = LayoutEngine()
 
         pointToScale: Point = Point(x=100, y=100)
 
         expectedPoint: Point = Point(x=350, y=350)
-        scaledPoint:  Point = diagram._scalePoint(point=pointToScale, scale=3.5)
+        scaledPoint:  Point = layoutEngine._scalePoint(point=pointToScale, scale=3.5)
 
         self.assertEqual(expectedPoint, scaledPoint, 'Scaling is not working correctly')
 
     def testDetermineRepulsionBetweenNodes(self):
 
-        diagram: Diagram = self._createDiagramWithFakeNodes(3)
+        layoutEngine: LayoutEngine = self._createDiagramWithFakeNodes(3)
 
-        layoutList: NodeLayoutInformationList = self._createFixedMetaNodes(diagram)
+        layoutList: NodeLayoutInformationList = self._createFixedMetaNodes(layoutEngine)
 
         netForce: Vector = Vector(magnitude=0.0, direction=0.0)
         for currentLayoutInformation in layoutList:
             metaNode = currentLayoutInformation.node
-            netForce = diagram._determineRepulsionBetweenNodes(metaNode=metaNode)
+            netForce = layoutEngine._determineRepulsionBetweenNodes(metaNode=metaNode)
             self.logger.info(f'Net force {netForce} against: {metaNode=}')
 
         self.logger.info(f'{netForce=}')
@@ -176,11 +176,11 @@ class TestDiagram(UnitTestBase):
 
     def testRandomizeInitialNodeCoordinates(self):
 
-        diagram: Diagram = self._createDiagramWithFakeNodes(NUMBER_OF_NODES_TO_GENERATE)
+        layoutEngine: LayoutEngine = self._createDiagramWithFakeNodes(NUMBER_OF_NODES_TO_GENERATE)
 
-        layout: NodeLayoutInformationList = diagram._randomizeInitialNodeCoordinates()
+        layout: NodeLayoutInformationList = layoutEngine._randomizeInitialNodeCoordinates()
 
-        self.logger.info(f'{diagram=}')
+        self.logger.info(f'{layoutEngine=}')
 
         # Test to make sure random coordinates have actually been generated
         for layoutInfo in layout:
@@ -189,7 +189,7 @@ class TestDiagram(UnitTestBase):
 
     def testCalculateDistance(self):
 
-        distance: int = Diagram.calculateDistance(a=Point(100, 100), b=Point(100, 200))
+        distance: int = LayoutEngine.calculateDistance(a=Point(100, 100), b=Point(100, 200))
 
         self.assertEqual(100, distance, 'Incorrect distance')
 
@@ -200,26 +200,26 @@ class TestDiagram(UnitTestBase):
 
         return TwoFakeNodes((actingOnNode, creatingForceNode))
 
-    def _createDiagramWithFakeNodes(self, numberToGenerate: int) -> Diagram:
+    def _createDiagramWithFakeNodes(self, numberToGenerate: int) -> LayoutEngine:
 
-        diagram: Diagram = Diagram()
+        layoutEngine: LayoutEngine = LayoutEngine()
 
         parentNode: Node = FakeNode(location=Point(), fakeId=1)
-        diagram.addNode(parentNode)
+        layoutEngine.addNode(parentNode)
         for x in range(numberToGenerate):
             fakeNode: FakeNode = FakeNode(location=Point(), fakeId=x+1)
-            diagram.addNode(fakeNode)
+            layoutEngine.addNode(fakeNode)
             parentNode.addChild(fakeNode)
 
-        return diagram
+        return layoutEngine
 
-    def _createFixedMetaNodes(self, diagram: Diagram) -> NodeLayoutInformationList:
+    def _createFixedMetaNodes(self, layoutEngine: LayoutEngine) -> NodeLayoutInformationList:
         points: List[Point] = [
             Point(25, 25), Point(-25, -25), Point(0, 0)
         ]
         layout: NodeLayoutInformationList = NodeLayoutInformationList([])
         x: int = 0
-        for node in diagram.nodes:
+        for node in layoutEngine.nodes:
             diagramNode: Node = node
             diagramNode.location = points[x]
 

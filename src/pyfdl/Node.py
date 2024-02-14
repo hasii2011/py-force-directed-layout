@@ -15,7 +15,7 @@ from pyfdl.Point import Point
 from pyfdl.Size import Size
 
 if TYPE_CHECKING:
-    from pyfdl.Diagram import Diagram
+    from pyfdl.LayoutEngine import LayoutEngine
 
 from pyfdl.LayoutTypes import Nodes
 
@@ -28,9 +28,9 @@ class Node(ABC):
 
         self.nodeLogger: Logger = getLogger(__name__)
 
-        self._diagram:     'Diagram' = cast('Diagram', None)
-        self._connections: Nodes     = Nodes([])
-        self._location:    Point     = Point()
+        self._layoutEngine: 'LayoutEngine' = cast('LayoutEngine', None)
+        self._connections:  Nodes     = Nodes([])
+        self._location:     Point     = Point()
 
     @property
     @abstractmethod
@@ -83,18 +83,18 @@ class Node(ABC):
         self._location.y = y
 
     @property
-    def diagram(self) -> 'Diagram':
-        return self._diagram
+    def layoutEngine(self) -> 'LayoutEngine':
+        return self._layoutEngine
 
-    @diagram.setter
-    def diagram(self, diagram: 'Diagram'):
+    @layoutEngine.setter
+    def layoutEngine(self, layoutEngine: 'LayoutEngine'):
 
-        if diagram == self._diagram:
+        if layoutEngine == self._layoutEngine:
             pass
         else:
-            if diagram is not None:
-                self._diagram = diagram
-                self._diagram.addNode(self)
+            if layoutEngine is not None:
+                self._layoutEngine = layoutEngine
+                self._layoutEngine.addNode(self)
 
     @property
     def connections(self) -> Nodes:
@@ -116,7 +116,7 @@ class Node(ABC):
         assert child is not None, 'Null child is not allowed'
 
         if child != self and child not in self._connections:
-            child.diagram = self.diagram
+            child.layoutEngine = self.layoutEngine
             self._connections.append(child)
             return True
         else:

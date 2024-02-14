@@ -70,7 +70,7 @@ class DemoLayout(App):
 
     # noinspection PyUnusedLocal
     def onArrange(self, event: CommandEvent):
-        self._diagramFrame.diagram.arrange(statusCallback=self._layoutStatusCallBack)
+        self._diagramFrame.layoutEngine.arrange(statusCallback=self._layoutStatusCallBack)
         self._diagramFrame.Refresh()
 
         self._layoutProgressDialog.Destroy()
