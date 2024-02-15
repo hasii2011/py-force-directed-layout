@@ -66,7 +66,7 @@ class LayoutEngine:
         """
         Removes all nodes and connections from the diagram.
 
-        Do not use the property because you get a copy
+        Do not access via the property because you get a copy
         """
         self._nodes.clear()
 
@@ -248,7 +248,7 @@ class LayoutEngine:
 
     def _randomizeInitialNodeCoordinates(self) -> NodeLayoutInformationList:
         """
-        Copy nodes into an array of metadata and randomise initial coordinates for each node
+        Copy nodes into an array of metadata and randomize initial coordinates for each node
 
         Returns:  Metadata
         """
@@ -331,10 +331,8 @@ class LayoutEngine:
             start: The node that the angle is measured from.
             end:   The node that creates the angle.
 
-        Returns: he bearing angle, in degrees.
+        Returns: The bearing angle, in degrees.
         """
-        # 		Point half = new Point(start.X + ((end.X - start.X) / 2), start.Y + ((end.Y - start.Y) / 2));
-
         x: int = start.x + ((end.x - start.x) // 2)
         y: int = start.y + ((end.y - start.y) // 2)
 

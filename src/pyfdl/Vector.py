@@ -105,7 +105,7 @@ class Vector:
         """
         Only magnitude is affected by scalar multiplication
 
-        In the C# version other was just a scalar value.  In this
+        In the C# version other was a scalar value.  In this
         version it has to be a Vector with the 'magnitude' value set to the
         appropriate value
 
