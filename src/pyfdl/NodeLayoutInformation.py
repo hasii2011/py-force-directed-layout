@@ -11,6 +11,10 @@ from pyfdl.Vector import Vector
 
 @dataclass
 class NodeLayoutInformation:
+    """
+    Tracks the mechanical properties (velocity, future coordinates) of each node during the
+    force-based simulation.
+    """
 
     node:         Node
     """

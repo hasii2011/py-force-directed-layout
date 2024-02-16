@@ -43,7 +43,11 @@ class LayoutEngine:
     Represents a simple diagram consisting of nodes and connections, implementing a
     force-directed algorithm for automatically arranging the nodes.
 
-    TODO: provide equality capability
+    The repulsion force is exerted by every node, and each node is repelled
+    (however slightly) by every other node.
+
+    The attraction force is exerted on each node by the nodes that are connected to it.
+    Isolated nodes are unaffected by this force.
     """
     ATTRACTION_CONSTANT: float = 0.1    # spring constant   # TODO Configurable
     REPULSION_CONSTANT:  float = 10000  # charge constant   # TODO Configurable

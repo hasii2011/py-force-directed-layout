@@ -23,6 +23,7 @@ from pyfdl.LayoutTypes import Nodes
 class Node(ABC):
     """
     I hate cyclical dependencies
+    Node is the base class for a node on a diagram.
     """
     def __init__(self):
 
@@ -35,6 +36,11 @@ class Node(ABC):
     @property
     @abstractmethod
     def size(self) -> Size:
+        """
+        May be used when rendering
+
+        Returns:  The node width and height
+        """
         pass
 
     def drawConnector(self, dc: DrawingContext, sourcePoint: Point, destinationPoint: Point):
