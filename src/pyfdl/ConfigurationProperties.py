@@ -42,7 +42,24 @@ def configurationSetter(sectionName: str):
     return decoratorConfigurationSetter
 
 
-def configurationGetter(sectionName: str):
+DeSerializeFunction = Callable[[str], Any]
+"""
+Function that takes a string and does a custom deserialization
+"""
+
+
+def configurationGetter(sectionName: str, deserializeFunction: DeSerializeFunction = None):
+    """
+
+    Args:
+        sectionName:            Section to get our value from
+        deserializeFunction:    If this value is `None`, we  use str();
+                                If you supply this method,
+                                it is imperative that the underlying object implement a .__repr__()
+                                that is consumable by the de-Serialize function
+
+    Returns:  Nothing we return our own value
+    """
 
     def decoratorConfigurationGetter(func):
 
@@ -56,6 +73,9 @@ def configurationGetter(sectionName: str):
             configParser: ConfigParser = baseConfiguration.configurationParser
 
             value = configParser.get(sectionName, f'{func.__name__}')
+
+            if deserializeFunction is not None:
+                value = deserializeFunction(value)
             #  value = func(*args, **kwargs)   do not bother calling original
 
             return value
@@ -63,18 +83,11 @@ def configurationGetter(sectionName: str):
     return decoratorConfigurationGetter
 
 
-DeSerializeFunction = Callable[[str], Any]
-"""
-Function that takes a string and does a custom deserialization
-"""
-
-
 @dataclass
 class ConfigurationNameValue:
 
     name:                str = ''
-    defaultValue:        str = ''
-    deserializeFunction: DeSerializeFunction = cast(DeSerializeFunction, None)
+    defaultValue:        Any = None
 
 
 PropertyName = NewType('PropertyName', str)

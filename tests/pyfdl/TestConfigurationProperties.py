@@ -59,17 +59,15 @@ class FakeConfiguration(ConfigurationProperties):
     def __init__(self):
         super().__init__(baseFileName=BASE_FILE_NAME, moduleName=MODULE_NAME, sections=FAKE_SECTIONS)
 
-        self._ozzeeHairColor: str = ''
-
     @property
     @configurationGetter(sectionName='Ozzee')
     def ozzeeHairColor(self) -> str:
-        return self._ozzeeHairColor
+        return ''
 
     @ozzeeHairColor.setter
     @configurationSetter(sectionName='Ozzee')
     def ozzeeHairColor(self, newValue: str):
-        self._ozzeeHairColor = newValue
+        pass
 
 
 class TestConfigurationProperties(UnitTestBase):

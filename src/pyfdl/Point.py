@@ -1,5 +1,6 @@
 
 from dataclasses import dataclass
+from typing import List
 
 NO_X_COORDINATE: int = 0
 NO_Y_COORDINATE: int = 0
@@ -28,3 +29,28 @@ class Point:
         newY: int = abs(self.y - other.y)
 
         return Point(x=newX, y=newY)
+
+    @classmethod
+    def deSerialize(cls, value: str) -> 'Point':
+
+        point: Point = Point()
+
+        xy: List[str] = value.split(sep=',')
+
+        assert len(xy) == 2, 'Incorrectly formatted point'
+
+        try:
+            point.x = int(xy[0])
+            point.y = int(xy[1])
+        except ValueError as ve:
+            print(f'Point - {ve}.')
+            point.x = 0
+            point.y = 0
+
+        return point
+
+    def __str__(self):
+        return f'{self.x},{self.y}'
+
+    def __repr__(self):
+        return self.__str__()
