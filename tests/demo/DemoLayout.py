@@ -9,10 +9,12 @@ from wx import DEFAULT_FRAME_STYLE
 from wx import EVT_MENU
 from wx import FRAME_FLOAT_ON_PARENT
 from wx import ID_EXIT
+from wx import ID_PREFERENCES
 from wx import Menu
 from wx import MenuBar
 
 from wx import NewIdRef as wxNewIdRef
+from wx import OK
 from wx import PD_APP_MODAL
 from wx import PD_ELAPSED_TIME
 from wx import ProgressDialog
@@ -25,6 +27,7 @@ from codeallybasic.UnitTestBase import UnitTestBase
 
 from pyfdl.LayoutTypes import LayoutStatus
 from tests.demo.DiagramFrame import DiagramFrame
+from tests.demo.DlgConfiguration import DlgConfiguration
 
 FRAME_WIDTH:  int = 1280
 FRAME_HEIGHT: int = 800
@@ -68,16 +71,12 @@ class DemoLayout(App):
 
         return True
 
-    # noinspection PyUnusedLocal
-    def onArrange(self, event: CommandEvent):
-        self._diagramFrame.layoutEngine.arrange(statusCallback=self._layoutStatusCallBack)
-        self._diagramFrame.Refresh()
-
-        self._layoutProgressDialog.Destroy()
-
     def _createApplicationMenuBar(self):
         menuBar:  MenuBar = MenuBar()
         fileMenu: Menu    = Menu()
+
+        fileMenu.AppendSeparator()
+        fileMenu.Append(ID_PREFERENCES, "&Configuration\tCtrl-C", "Force Directed Configuration")
 
         fileMenu.AppendSeparator()
         fileMenu.Append(ID_EXIT, '&Quit', "Quit Application")
@@ -96,7 +95,22 @@ class DemoLayout(App):
 
         self._topLevelFrame.SetMenuBar(menuBar)
 
-        self.Bind(EVT_MENU, self.onArrange, id=self._arrangeId)
+        self.Bind(EVT_MENU, self._onArrange, id=self._arrangeId)
+        self.Bind(EVT_MENU, self._onConfiguration, id=ID_PREFERENCES)
+
+    # noinspection PyUnusedLocal
+    def _onArrange(self, event: CommandEvent):
+        self._diagramFrame.layoutEngine.arrange(statusCallback=self._layoutStatusCallBack)
+        self._diagramFrame.Refresh()
+
+        self._layoutProgressDialog.Destroy()
+
+    # noinspection PyUnusedLocal
+    def _onConfiguration(self, event: CommandEvent):
+
+        with DlgConfiguration(parent=self._topLevelFrame) as dlg:
+            if dlg.ShowModal() == OK:
+                self.logger.info(f'Pressed Ok')
 
     def _layoutStatusCallBack(self, status: LayoutStatus):
 

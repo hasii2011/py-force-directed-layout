@@ -6,11 +6,12 @@ html-testRunner~=1.2.1
 mypy==1.8.0
 
 mypy-extensions==1.0.0
-types-setuptools==69.0.0.20240125
+types-setuptools==69.1.0.20240217
 typing_extensions==4.9.0
 
 buildlackey==1.6.3
 
 codeallybasic==1.1.0
+codeallyadvanced==1.1.0
 
 wxPython~=4.2.1
