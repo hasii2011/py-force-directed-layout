@@ -1,4 +1,4 @@
-
+from typing import Callable
 from typing import List
 
 from dataclasses import dataclass
@@ -7,6 +7,7 @@ from math import ceil
 
 from logging import Logger
 from logging import getLogger
+from typing import cast
 
 from wx import ALIGN_LEFT
 from wx import ID_ANY
@@ -18,11 +19,16 @@ from wx.lib.agw.knobctrl import KnobCtrlEvent
 
 from wx.lib.sized_controls import SizedStaticBox
 
+FormatValueCallback = Callable[[int | float], str]
+NO_CALLBACK:       FormatValueCallback = cast(FormatValueCallback, None)
+
 
 @dataclass
-class DialRange:
-    minValue: int | float = 0
-    maxValue: int | float = 0
+class DialSelectorParameters:
+    minValue:  int | float = 0
+    maxValue:  int | float = 0
+    dialLabel: str         = ''
+    callback:  FormatValueCallback = NO_CALLBACK
 
 
 OPINIONATED_TICK_FREQUENCY: int = 10
@@ -38,15 +44,16 @@ class DialSelector(SizedStaticBox):
     values to align on those marks
     """
 
-    def __init__(self, parent, label: str, dialRange: DialRange):
+    def __init__(self, parent, parameters: DialSelectorParameters):
 
-        super().__init__(parent, label=label)
+        super().__init__(parent, label=parameters.dialLabel)
         self.logger: Logger = getLogger(__name__)
 
-        self._dialRange:     DialRange   = dialRange
+        self._parameters:    DialSelectorParameters = parameters
+
         self._tickFrequency: int         = OPINIONATED_TICK_FREQUENCY
         self._tickValue:     int | float = OPINIONATED_TICK_VALUE
-        self._value:         int | float = dialRange.minValue
+        self._value:         int | float = parameters.minValue
 
         self.SetSizerType('vertical')
         # noinspection PyUnresolvedReferences
@@ -58,9 +65,10 @@ class DialSelector(SizedStaticBox):
         self._knobCtrl.SetKnobRadius(4)
         self._setTicksOnKnob()
 
-        self._knobTracker: StaticText = StaticText(parent=self, id=ID_ANY, label=f'{label}: 0', style=ALIGN_LEFT)
+        self._knobTracker: StaticText = StaticText(parent=self, id=ID_ANY, label=f'{parameters.dialLabel}: 0', style=ALIGN_LEFT)
 
-        self._displayValue(value=dialRange.minValue)
+        self._displayValue(value=parameters.minValue)
+
         self.Bind(EVT_KC_ANGLE_CHANGED, self._onKnobChanged, self._knobCtrl)
 
     @property
@@ -89,6 +97,7 @@ class DialSelector(SizedStaticBox):
     @tickValue.setter
     def tickValue(self, value: int | float):
         self._tickValue = value
+        self._displayValue(value=value)
 
     @property
     def value(self) -> int | float:
@@ -137,7 +146,7 @@ class DialSelector(SizedStaticBox):
         return roundedKnobValue
 
     def _setTicksOnKnob(self):
-        assert self._dialRange is not None, 'Developer Error'
+        assert self._parameters is not None, 'Developer Error'
         assert self._tickFrequency != 0,    'Developer Error'
         assert self._knobCtrl is not None,  'Developer Error'
 
@@ -147,7 +156,10 @@ class DialSelector(SizedStaticBox):
         self._knobCtrl.SetTags(integerList)
 
     def _displayValue(self, value: int | float):
-        self._knobTracker.SetLabel(f'{value:.2f}')
+
+        label: str = self._parameters.callback(value)
+
+        self._knobTracker.SetLabel(label)
         self._knobTracker.Refresh()
 
     @classmethod

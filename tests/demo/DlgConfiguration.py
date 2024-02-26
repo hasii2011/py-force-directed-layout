@@ -33,7 +33,7 @@ from wx.lib.sized_controls import SizedStaticBox
 
 from codeallyadvanced.ui.widgets.PositionControl import PositionControl
 
-from tests.demo.DialSelector import DialRange
+from tests.demo.DialSelector import DialSelectorParameters
 from tests.demo.DialSelector import DialSelector
 
 
@@ -80,13 +80,13 @@ class DlgConfiguration(SizedDialog):
         # noinspection PyUnresolvedReferences
         localPanel.SetSizerProps(expand=True, proportion=2)
 
-        dampingDialRange: DialRange    = DialRange(0.1, 1.0)
-        damping:          DialSelector = DialSelector(localPanel, label='Damping', dialRange=dampingDialRange)
+        dampingParameters: DialSelectorParameters = DialSelectorParameters(minValue=0.1, maxValue=1.0, dialLabel='Damping', callback=self._formatDampingValue)
+        damping:           DialSelector           = DialSelector(localPanel, parameters=dampingParameters)
         damping.tickFrequency = 10
         damping.tickValue     = 0.1
 
-        springLengthDialRange: DialRange    = DialRange(1, 500)
-        springLength:          DialSelector = DialSelector(localPanel, label='Spring Length', dialRange=springLengthDialRange)
+        springLengthParameters: DialSelectorParameters = DialSelectorParameters(minValue=100, maxValue=500, dialLabel='Spring Length', callback=self._formatSpringLength)
+        springLength:           DialSelector           = DialSelector(localPanel, parameters=springLengthParameters)
         springLength.tickFrequency = 20
         springLength.tickValue     = 25
         springLength.value         = 100
@@ -176,3 +176,10 @@ class DlgConfiguration(SizedDialog):
         slider.SetSizerProps(expand=True, proportion=1)
 
         return slider
+
+    def _formatDampingValue(self, valueToFormat: float):
+
+        return f'{valueToFormat:.2f}'
+
+    def _formatSpringLength(self, valueToFormat: int):
+        return f'{valueToFormat}'
