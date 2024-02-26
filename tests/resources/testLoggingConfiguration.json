@@ -38,7 +38,7 @@
             "level":     "INFO",
             "propagate": "False"
         },
-        "tests.demo.DiagramFrame": {
+        "tests.demo.DialSelector": {
             "level":     "DEBUG",
             "propagate": "False"
         }

@@ -3,6 +3,8 @@ from typing import List
 
 from dataclasses import dataclass
 
+from math import ceil
+
 from logging import Logger
 from logging import getLogger
 
@@ -36,12 +38,11 @@ class DialSelector(SizedStaticBox):
     values to align on those marks
     """
 
-    def __init__(self, parent, label: str, valueLabel: str, dialRange: DialRange):
+    def __init__(self, parent, label: str, dialRange: DialRange):
 
         super().__init__(parent, label=label)
         self.logger: Logger = getLogger(__name__)
 
-        self._valueLabel:    str         = f"{valueLabel}:"
         self._dialRange:     DialRange   = dialRange
         self._tickFrequency: int         = OPINIONATED_TICK_FREQUENCY
         self._tickValue:     int | float = OPINIONATED_TICK_VALUE
@@ -57,7 +58,7 @@ class DialSelector(SizedStaticBox):
         self._knobCtrl.SetKnobRadius(4)
         self._setTicksOnKnob()
 
-        self._knobTracker: StaticText = StaticText(parent=self, id=ID_ANY, label=f'{valueLabel}: 0', style=ALIGN_LEFT)
+        self._knobTracker: StaticText = StaticText(parent=self, id=ID_ANY, label=f'{label}: 0', style=ALIGN_LEFT)
 
         self._displayValue(value=dialRange.minValue)
         self.Bind(EVT_KC_ANGLE_CHANGED, self._onKnobChanged, self._knobCtrl)
@@ -88,14 +89,6 @@ class DialSelector(SizedStaticBox):
     @tickValue.setter
     def tickValue(self, value: int | float):
         self._tickValue = value
-
-    @property
-    def valueLabel(self) -> str:
-        return self._valueLabel
-
-    @valueLabel.setter
-    def valueLabel(self, label: str):
-        self._valueLabel = label
 
     @property
     def value(self) -> int | float:
@@ -132,12 +125,12 @@ class DialSelector(SizedStaticBox):
         # TODO: This will be moved to codeallybasic
         # Including the unit tests
         #
-        def roundToNearestTick(valueToRound, boundaryValue: int) -> int:
-            return int(round(valueToRound / boundaryValue)) * boundaryValue
+        def roundUpToNearestTick(valueToRound, boundaryValue: int) -> int:
+            return int(ceil(valueToRound / boundaryValue)) * boundaryValue
 
         roundToIncrement: int = KNOB_CTRL_GRANULARITY // self._tickFrequency
 
-        roundedKnobValue: int = roundToNearestTick(valueToRound=knobValue, boundaryValue=roundToIncrement)
+        roundedKnobValue: int = roundUpToNearestTick(valueToRound=knobValue, boundaryValue=roundToIncrement)
 
         self.logger.info(f'{knobValue=} {roundedKnobValue=}')
 
@@ -145,23 +138,23 @@ class DialSelector(SizedStaticBox):
 
     def _setTicksOnKnob(self):
         assert self._dialRange is not None, 'Developer Error'
-        assert self._tickFrequency != 0, 'Developer Error'
-        assert self._knobCtrl is not None, 'Developer Error'
+        assert self._tickFrequency != 0,    'Developer Error'
+        assert self._knobCtrl is not None,  'Developer Error'
 
-        integerList:   List[int] = list(range(1, self._tickFrequency + 1, 1))
+        integerList:   List[int] = list(range(1, self._tickFrequency, 1))
 
         self.logger.info(f'{integerList=}')
         self._knobCtrl.SetTags(integerList)
 
     def _displayValue(self, value: int | float):
-        self._knobTracker.SetLabel(f'{self._valueLabel} {value:.2f}')
+        self._knobTracker.SetLabel(f'{value:.2f}')
         self._knobTracker.Refresh()
 
     @classmethod
     def calculateRealValue(cls, roundedKnobValue: int, tickValue: int | float, tickFrequency: int):
 
-        tickPosition:  int = int((roundedKnobValue / KNOB_CTRL_GRANULARITY) * tickFrequency)
-
+        tickPosition: int = int((roundedKnobValue / KNOB_CTRL_GRANULARITY) * tickFrequency)
+        print(f'{tickPosition=}')
         realValue    = tickValue * tickPosition
 
         return realValue

@@ -80,19 +80,17 @@ class DlgConfiguration(SizedDialog):
         # noinspection PyUnresolvedReferences
         localPanel.SetSizerProps(expand=True, proportion=2)
 
-        # damping: Slider = self._layoutSlider(parentPanel=localPanel, label='Damping', value=2, minValue=1, maxValue=10)
-        # damping.SetTickFreq(1)
-
-        dialRange: DialRange    = DialRange(0.1, 1.0)
-        damping:   DialSelector = DialSelector(localPanel, label='Damping', valueLabel='Damping', dialRange=dialRange)
+        dampingDialRange: DialRange    = DialRange(0.1, 1.0)
+        damping:          DialSelector = DialSelector(localPanel, label='Damping', dialRange=dampingDialRange)
         damping.tickFrequency = 10
         damping.tickValue     = 0.1
 
-        # self._layoutKnobCtrl(parentPanel=localPanel, label='Damping', tickFrequency=10))
+        springLengthDialRange: DialRange    = DialRange(1, 500)
+        springLength:          DialSelector = DialSelector(localPanel, label='Spring Length', dialRange=springLengthDialRange)
+        springLength.tickFrequency = 20
+        springLength.tickValue     = 25
+        springLength.value         = 100
 
-        # springLength: Slider = self._layoutSlider(parentPanel=localPanel, label='Spring Length',
-        #                                           value=2, minValue=1, maxValue=500)
-        # springLength.SetTickFreq(5)
         #
         # maxIterations: Slider = self._layoutSlider(parentPanel=localPanel, label='Maximum Iterations',
         #                                            value=50, minValue=10, maxValue=1000)
