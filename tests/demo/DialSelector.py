@@ -111,6 +111,9 @@ class DialSelector(SizedStaticBox):
     @value.setter
     def value(self, newValue: int | float):
         self._value = newValue
+        tickValue: int = self._valueToTick(value=newValue)
+        self._knobCtrl.SetValue(tickValue)
+        self._displayValue(newValue)
 
     def _onKnobChanged(self, event: KnobCtrlEvent):
 
@@ -170,3 +173,9 @@ class DialSelector(SizedStaticBox):
         realValue    = tickValue * tickPosition
 
         return realValue
+
+    def _valueToTick(self, value: int | float) -> int:
+
+        tickNumber = value // self._tickFrequency
+
+        return tickNumber

@@ -91,6 +91,14 @@ class DlgConfiguration(SizedDialog):
         springLength.tickValue     = 25
         springLength.value         = 100
 
+        maxIterationsParameters: DialSelectorParameters = DialSelectorParameters(minValue=100,
+                                                                                 maxValue=1000,
+                                                                                 dialLabel='Maximum Iterations',
+                                                                                 callback=self._formatMaxIterations)
+        maxIterations: DialSelector = DialSelector(localPanel, parameters=maxIterationsParameters)
+        maxIterations.tickFrequency = 50
+        maxIterations.tickValue     = 20
+        maxIterations.value         = 500
         #
         # maxIterations: Slider = self._layoutSlider(parentPanel=localPanel, label='Maximum Iterations',
         #                                            value=50, minValue=10, maxValue=1000)
@@ -182,4 +190,7 @@ class DlgConfiguration(SizedDialog):
         return f'{valueToFormat:.2f}'
 
     def _formatSpringLength(self, valueToFormat: int):
+        return f'{valueToFormat}'
+
+    def _formatMaxIterations(self, valueToFormat: int):
         return f'{valueToFormat}'
