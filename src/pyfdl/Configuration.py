@@ -1,3 +1,4 @@
+
 from pyfdl.ConfigurationProperties import ConfigurationNameValue
 from pyfdl.ConfigurationProperties import ConfigurationProperties
 from pyfdl.ConfigurationProperties import PropertyName
@@ -6,6 +7,7 @@ from pyfdl.ConfigurationProperties import SectionName
 from pyfdl.ConfigurationProperties import Sections
 from pyfdl.ConfigurationProperties import configurationGetter
 from pyfdl.ConfigurationProperties import configurationSetter
+
 from pyfdl.Point import Point
 
 # these are for the arrange method
@@ -144,4 +146,3 @@ class Configuration(ConfigurationProperties):
     @configurationSetter(sectionName=FACTORS_SECTION_NAME)
     def stopCount(self, newValue: int):
         pass
-

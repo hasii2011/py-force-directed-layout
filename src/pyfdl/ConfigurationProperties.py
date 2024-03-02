@@ -35,7 +35,7 @@ def configurationSetter(sectionName: str):
             baseConfiguration.saveConfiguration()
 
             value = func(*args, **kwargs)
-            print(f'Do something after')
+            # print(f'Do something after')
             return value
 
         return setWrapper

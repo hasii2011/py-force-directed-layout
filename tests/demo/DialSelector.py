@@ -1,3 +1,4 @@
+from typing import Any
 from typing import Callable
 from typing import List
 
@@ -19,8 +20,11 @@ from wx.lib.agw.knobctrl import KnobCtrlEvent
 
 from wx.lib.sized_controls import SizedStaticBox
 
-FormatValueCallback = Callable[[int | float], str]
-NO_CALLBACK:       FormatValueCallback = cast(FormatValueCallback, None)
+FormatValueCallback = Callable[[Any], str]
+ValueChangeCallback = Callable[[Any], None]
+
+NO_FORMAT_CALLBACK:  FormatValueCallback = cast(FormatValueCallback, None)
+NO_VALUE_CALLBACK:   ValueChangeCallback = cast(ValueChangeCallback, None)
 
 
 @dataclass
@@ -28,7 +32,8 @@ class DialSelectorParameters:
     minValue:  int | float = 0
     maxValue:  int | float = 0
     dialLabel: str         = ''
-    callback:  FormatValueCallback = NO_CALLBACK
+    formatValueCallback:  FormatValueCallback = NO_FORMAT_CALLBACK
+    valueChangedCallback: ValueChangeCallback = NO_VALUE_CALLBACK
 
 
 OPINIONATED_TICK_FREQUENCY: int = 10
@@ -110,9 +115,14 @@ class DialSelector(SizedStaticBox):
 
     @value.setter
     def value(self, newValue: int | float):
+
         self._value = newValue
-        tickValue: int = self._valueToTick(value=newValue)
-        self._knobCtrl.SetValue(tickValue)
+
+        tickNumber: int = self._valueToTick(value=newValue)
+
+        self.logger.debug(f'{newValue=} {tickNumber=}')
+
+        self._knobCtrl.SetValue(tickNumber)
         self._displayValue(newValue)
 
     def _onKnobChanged(self, event: KnobCtrlEvent):
@@ -121,14 +131,16 @@ class DialSelector(SizedStaticBox):
         roundedKnobValue: int = self._alignKnobToTick(knobValue=knobValue)
         self._knobCtrl.SetValue(roundedKnobValue)
 
-        realValue = DialSelector.calculateRealValue(roundedKnobValue=roundedKnobValue,
-                                                    tickValue=self._tickValue,
-                                                    tickFrequency=self._tickFrequency)
+        realValue = self._calculateRealValue(roundedKnobValue=roundedKnobValue,
+                                             tickValue=self._tickValue,
+                                             tickFrequency=self._tickFrequency)
 
-        self.logger.info(f'realValue={realValue:.2f}')
+        self.logger.debug(f'realValue={realValue:.2f}')
         self._displayValue(value=realValue)
 
         self._value = realValue
+
+        self._parameters.valueChangedCallback(self._value)
 
         event.Skip(skip=True)
 
@@ -155,27 +167,26 @@ class DialSelector(SizedStaticBox):
 
         integerList:   List[int] = list(range(1, self._tickFrequency, 1))
 
-        self.logger.info(f'{integerList=}')
+        self.logger.debug(f'{integerList=}')
         self._knobCtrl.SetTags(integerList)
 
     def _displayValue(self, value: int | float):
 
-        label: str = self._parameters.callback(value)
+        label: str = self._parameters.formatValueCallback(value)
 
         self._knobTracker.SetLabel(label)
         self._knobTracker.Refresh()
 
-    @classmethod
-    def calculateRealValue(cls, roundedKnobValue: int, tickValue: int | float, tickFrequency: int):
+    def _calculateRealValue(self, roundedKnobValue: int, tickValue: int | float, tickFrequency: int):
 
         tickPosition: int = int((roundedKnobValue / KNOB_CTRL_GRANULARITY) * tickFrequency)
-        print(f'{tickPosition=}')
+        self.logger.debug(f'{tickPosition=}')
         realValue    = tickValue * tickPosition
 
         return realValue
 
     def _valueToTick(self, value: int | float) -> int:
 
-        tickNumber = value // self._tickFrequency
+        tickNumber: int = int(value // self._tickValue)
 
         return tickNumber
