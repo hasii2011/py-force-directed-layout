@@ -205,7 +205,7 @@ class DlgConfiguration(SizedDialog):
         # noinspection PyArgumentList
         attractionForce.SetDigits(2)
         # noinspection PyArgumentList
-        attractionForce.SetValue(self._configuration.attractionFactor)
+        attractionForce.SetValue(self._configuration.attractionForce)
         attractionForce.Bind(EVT_FLOATSPIN, self._attractionForceChanged)
 
         repulsionPanel: SizedStaticBox = SizedStaticBox(algorithmFactorsPanel, label='Node Repulsion Force')
@@ -214,7 +214,7 @@ class DlgConfiguration(SizedDialog):
 
         repulsionForce: SpinCtrl = SpinCtrl(repulsionPanel, size=(75, 35), pos=DefaultPosition, style=SP_VERTICAL)
         repulsionForce.SetRange(500, 15000)
-        repulsionForce.SetValue(self._configuration.repulsionFactor)
+        repulsionForce.SetValue(self._configuration.repulsionForce)
         repulsionForce.SetIncrement(100)
         repulsionForce.Bind(EVT_SPINCTRL, self._repulsionForceChanged)
 
@@ -282,10 +282,10 @@ class DlgConfiguration(SizedDialog):
 
         floatSpin: FloatSpin = event.GetEventObject()
 
-        self._configuration.attractionFactor = floatSpin.GetValue()
+        self._configuration.attractionForce = floatSpin.GetValue()
 
     def _repulsionForceChanged(self, event: SpinEvent):
 
         spinCtrl: SpinCtrl = event.GetEventObject()
 
-        self._configuration.repulsionFactor = spinCtrl.GetValue()
+        self._configuration.repulsionForce = spinCtrl.GetValue()

@@ -16,6 +16,8 @@ SECTION_ARRANGE: Section = Section(
         ConfigurationNameValue(name=PropertyName('damping'),       defaultValue='0.5'),
         ConfigurationNameValue(name=PropertyName('springLength'),  defaultValue='100'),
         ConfigurationNameValue(name=PropertyName('maxIterations'), defaultValue='500'),
+        ConfigurationNameValue(name=PropertyName('attractionForce'), defaultValue='0.1'),
+        ConfigurationNameValue(name=PropertyName('repulsionForce'), defaultValue='10000'),
     ]
 )
 
@@ -30,24 +32,22 @@ SECTION_RANDOMIZE: Section = Section(
 Stop execution after this many number of iterations
 where the totalDisplacement is less that minimumTotalDisplacement
 """
-SECTION_FACTORS: Section = Section(
+SECTION_EARLY_EXIT: Section = Section(
     [
-        ConfigurationNameValue(name=PropertyName('attractionFactor'),         defaultValue='0.1'),
-        ConfigurationNameValue(name=PropertyName('repulsionFactor'),          defaultValue='10000'),
         ConfigurationNameValue(name=PropertyName('minimumTotalDisplacement'), defaultValue='10'),
         ConfigurationNameValue(name=PropertyName('stopCount'),                defaultValue='15'),
     ]
 )
 
-ARRANGE_SECTION_NAME:   SectionName = SectionName('Arrange')
-RANDOMIZE_SECTION_NAME: SectionName = SectionName('Randomize')
-FACTORS_SECTION_NAME:   SectionName = SectionName('Factors')
+ARRANGE_SECTION_NAME:    SectionName = SectionName('Arrange')
+RANDOMIZE_SECTION_NAME:  SectionName = SectionName('Randomize')
+EARLY_EXIT_SECTION_NAME: SectionName = SectionName('EarlyExit')
 
 PYFDL_SECTIONS: Sections = Sections(
     {
-        ARRANGE_SECTION_NAME:   SECTION_ARRANGE,
-        RANDOMIZE_SECTION_NAME: SECTION_RANDOMIZE,
-        FACTORS_SECTION_NAME:   SECTION_FACTORS,
+        ARRANGE_SECTION_NAME:    SECTION_ARRANGE,
+        RANDOMIZE_SECTION_NAME:  SECTION_RANDOMIZE,
+        EARLY_EXIT_SECTION_NAME: SECTION_EARLY_EXIT,
     }
 )
 
@@ -88,6 +88,26 @@ class Configuration(ConfigurationProperties):
         pass
 
     @property
+    @configurationGetter(sectionName=ARRANGE_SECTION_NAME, deserializeFunction=float)
+    def attractionForce(self) -> float:
+        return 0.0
+
+    @attractionForce.setter
+    @configurationSetter(sectionName=ARRANGE_SECTION_NAME)
+    def attractionForce(self, newValue: float):
+        pass
+
+    @property
+    @configurationGetter(sectionName=ARRANGE_SECTION_NAME, deserializeFunction=int)
+    def repulsionForce(self) -> int:
+        return 0
+
+    @repulsionForce.setter
+    @configurationSetter(sectionName=ARRANGE_SECTION_NAME)
+    def repulsionForce(self, newValue: int):
+        pass
+
+    @property
     @configurationGetter(sectionName=RANDOMIZE_SECTION_NAME, deserializeFunction=Point.deSerialize)
     def minPoint(self) -> Point:
         return Point()
@@ -108,41 +128,21 @@ class Configuration(ConfigurationProperties):
         pass
 
     @property
-    @configurationGetter(sectionName=FACTORS_SECTION_NAME, deserializeFunction=float)
-    def attractionFactor(self) -> float:
-        return 0.0
-
-    @attractionFactor.setter
-    @configurationSetter(sectionName=FACTORS_SECTION_NAME)
-    def attractionFactor(self, newValue: float):
-        pass
-
-    @property
-    @configurationGetter(sectionName=FACTORS_SECTION_NAME, deserializeFunction=int)
-    def repulsionFactor(self) -> int:
-        return 0
-
-    @repulsionFactor.setter
-    @configurationSetter(sectionName=FACTORS_SECTION_NAME)
-    def repulsionFactor(self, newValue: int):
-        pass
-
-    @property
-    @configurationGetter(sectionName=FACTORS_SECTION_NAME, deserializeFunction=int)
+    @configurationGetter(sectionName=EARLY_EXIT_SECTION_NAME, deserializeFunction=int)
     def minimumTotalDisplacement(self) -> int:
         return 0
 
     @minimumTotalDisplacement.setter
-    @configurationSetter(sectionName=FACTORS_SECTION_NAME)
+    @configurationSetter(sectionName=EARLY_EXIT_SECTION_NAME)
     def minimumTotalDisplacement(self, newValue: int):
         pass
 
     @property
-    @configurationGetter(sectionName=FACTORS_SECTION_NAME, deserializeFunction=int)
+    @configurationGetter(sectionName=EARLY_EXIT_SECTION_NAME, deserializeFunction=int)
     def stopCount(self) -> int:
         return 0
 
     @stopCount.setter
-    @configurationSetter(sectionName=FACTORS_SECTION_NAME)
+    @configurationSetter(sectionName=EARLY_EXIT_SECTION_NAME)
     def stopCount(self, newValue: int):
         pass
