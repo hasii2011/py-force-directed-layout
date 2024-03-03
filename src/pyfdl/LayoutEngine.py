@@ -16,6 +16,7 @@ from random import randint
 from uuid import uuid4
 from uuid import UUID
 
+from pyfdl.Configuration import Configuration
 from pyfdl.LayoutTypes import LayoutStatus
 from pyfdl.LayoutTypes import LayoutStatusCallback
 from pyfdl.Node import Node
@@ -33,10 +34,6 @@ MAX_RANDOM_Y: int = 60     # TODO Configurable
 
 ORIGIN_POINT: Point = Point(0, 0)
 
-DEFAULT_DAMPING:        float = 0.5  # TODO Configurable
-DEFAULT_SPRING_LENGTH:  int = 100    # TODO Configurable
-DEFAULT_MAX_ITERATIONS: int = 500    # TODO Configurable
-
 
 class LayoutEngine:
     """
@@ -49,14 +46,13 @@ class LayoutEngine:
     The attraction force is exerted on each node by the nodes that are connected to it.
     Isolated nodes are unaffected by this force.
     """
-    ATTRACTION_CONSTANT: float = 0.1    # spring constant   # TODO Configurable
-    REPULSION_CONSTANT:  float = 10000  # charge constant   # TODO Configurable
 
     def __init__(self):
         self.logger: Logger = getLogger(__name__)
 
-        self.id:     UUID  = uuid4()
-        self._nodes: Nodes = Nodes([])
+        self._configuration: Configuration = Configuration()
+        self.id:             UUID          = uuid4()
+        self._nodes:         Nodes         = Nodes([])
 
     @property
     def nodes(self) -> Nodes:
@@ -131,13 +127,7 @@ class LayoutEngine:
 
         return removed
 
-    def arrange(self,
-                statusCallback: LayoutStatusCallback,
-                damping:        float = DEFAULT_DAMPING,
-                springLength:   int   = DEFAULT_SPRING_LENGTH,
-                maxIterations:  int   = DEFAULT_MAX_ITERATIONS,
-                deterministic:  bool  = True
-                ):
+    def arrange(self, statusCallback: LayoutStatusCallback, deterministic:  bool = True):
         """
         Runs the force-directed layout algorithm on this Diagram, using the specified parameters.
 
@@ -145,9 +135,6 @@ class LayoutEngine:
         object
         Args:
             statusCallback
-            damping:        Value between 0 and 1 that slows the motion of the nodes during layout.
-            springLength:   Value in pixels representing the length of the imaginary springs that run along the connectors.
-            maxIterations:  Maximum number of iterations before the algorithm terminates.
             deterministic:  Whether to use a random or deterministic layout.
 
         """
@@ -157,7 +144,8 @@ class LayoutEngine:
         else:
             randomSeed()
 
-        dampingVector: Vector = Vector(direction=0.0, magnitude=damping)        # Python multiplication works different than C#;  We need a real object
+        # Python multiplication works different than C#;  We need a real object
+        dampingVector: Vector = Vector(direction=0.0, magnitude=self._configuration.damping)
         layoutList:    NodeLayoutInformationList = self._randomizeInitialNodeCoordinates()
 
         stopCount:  int = 0
@@ -176,7 +164,9 @@ class LayoutEngine:
                 currentPosition: Vector = Vector(magnitude=magnitude, direction=direction)
 
                 netForce: Vector = self._determineRepulsionBetweenNodes(metaNode=metaNode)
-                netForce += self._determineAttractionBetweenConnections(currentLayoutNode=metaNode, springLength=springLength, netForce=netForce)
+                netForce += self._determineAttractionBetweenConnections(currentLayoutNode=metaNode,
+                                                                        springLength=self._configuration.springLength,
+                                                                        netForce=netForce)
 
                 # apply net force to node velocity
                 currentMeta.velocity = (currentMeta.velocity + netForce) * dampingVector
@@ -190,18 +180,18 @@ class LayoutEngine:
                 metaNode.location = currentMeta.nextPosition
 
             iterations += 1
-            if totalDisplacement < 10:      # TODO: Make configurable
+            if totalDisplacement < self._configuration.minimumTotalDisplacement:
                 stopCount += 1
-            if stopCount > 15:              # TODO: Make configurable
+            if stopCount > self._configuration.stopCount:
                 break
-            if iterations >= maxIterations:
+            if iterations >= self._configuration.maxIterations:
                 break
 
             # center the diagram around the origin
             layoutStatus.totalDisplacement = totalDisplacement
             layoutStatus.stopCount         = stopCount
             layoutStatus.iterations        = iterations
-            layoutStatus.maxIterations     = maxIterations
+            layoutStatus.maxIterations     = self._configuration.maxIterations
 
             statusCallback(layoutStatus)
         self._adjustNodes()
@@ -274,7 +264,7 @@ class LayoutEngine:
         """
         Calculates the attraction force between two connected nodes, using the specified spring length.
         Args:
-            x: The node that the force is acting on.
+            x: The node that the force is acting on.x
             y: The node creating the force
             springLength: The length of the spring, in pixels.
 
@@ -282,7 +272,8 @@ class LayoutEngine:
         """
         proximity: int = max(LayoutEngine.calculateDistance(x.location, y.location), 1)
         # Hooke's Law: F = -kx
-        force: float = LayoutEngine.ATTRACTION_CONSTANT * max(proximity - springLength, 0)
+        stiffnessValue: float = self._configuration.attractionForce
+        force: float = stiffnessValue * max(proximity - springLength, 0)
         angle: float = self._getBearingAngle(start=x.location, end=y.location)
 
         attractionVector: Vector = Vector(magnitude=force, direction=angle)
@@ -320,7 +311,9 @@ class LayoutEngine:
         """
         proximity: int = max(LayoutEngine.calculateDistance(x.location, y.location), 1)
         #  Coulomb's Law: F = k(Qq/r^2)
-        force: float = -(LayoutEngine.REPULSION_CONSTANT / pow(proximity, 2))
+        coulombLawConstant: int = self._configuration.repulsionForce
+
+        force: float = -(coulombLawConstant / pow(proximity, 2))
         angle: float = self._getBearingAngle(start=x.location, end=y.location)
 
         vector: Vector = Vector(magnitude=force, direction=angle)

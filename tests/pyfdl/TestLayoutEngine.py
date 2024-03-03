@@ -8,7 +8,7 @@ from unittest import main as unitTestMain
 
 from codeallybasic.UnitTestBase import UnitTestBase
 
-from pyfdl.LayoutEngine import DEFAULT_SPRING_LENGTH
+from pyfdl.Configuration import Configuration
 from pyfdl.LayoutEngine import LayoutEngine
 from pyfdl.LayoutEngine import ORIGIN_POINT
 from pyfdl.Node import Node
@@ -25,6 +25,7 @@ TwoFakeNodes = NewType('TwoFakeNodes', Tuple[FakeNode, FakeNode])
 
 
 NUMBER_OF_NODES_TO_GENERATE: int = 100
+KNOWN_SPRING_LENGTH:         int = 100
 
 
 class TestLayoutEngine(UnitTestBase):
@@ -40,6 +41,8 @@ class TestLayoutEngine(UnitTestBase):
 
     def setUp(self):
         super().setUp()
+
+        self._configuration: Configuration = Configuration()
 
     def tearDown(self):
         super().tearDown()
@@ -99,7 +102,7 @@ class TestLayoutEngine(UnitTestBase):
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
 
         expectedForce:   Vector = Vector(magnitude=46.5000, direction=45.00)
-        attractionForce: Vector = layoutEngine._calculateAttractionForce(x=actingOnNode, y=creatingForceNode, springLength=DEFAULT_SPRING_LENGTH)
+        attractionForce: Vector = layoutEngine._calculateAttractionForce(x=actingOnNode, y=creatingForceNode, springLength=KNOWN_SPRING_LENGTH)
 
         self.assertEqual(expectedForce, attractionForce, 'Attraction force miscalculation')
 
@@ -110,7 +113,7 @@ class TestLayoutEngine(UnitTestBase):
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
 
         expectedForce:   Vector = Vector(magnitude=46.5000, direction=225.00)
-        attractionForce: Vector = layoutEngine._calculateAttractionForce(x=creatingForceNode, y=actingOnNode, springLength=DEFAULT_SPRING_LENGTH)
+        attractionForce: Vector = layoutEngine._calculateAttractionForce(x=creatingForceNode, y=actingOnNode, springLength=KNOWN_SPRING_LENGTH)
 
         self.assertEqual(expectedForce, attractionForce, 'Attraction force miscalculation')
 

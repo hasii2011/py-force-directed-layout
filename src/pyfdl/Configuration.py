@@ -1,4 +1,6 @@
 
+from codeallybasic.SingletonV3 import SingletonV3
+
 from pyfdl.ConfigurationProperties import ConfigurationNameValue
 from pyfdl.ConfigurationProperties import ConfigurationProperties
 from pyfdl.ConfigurationProperties import PropertyName
@@ -52,7 +54,7 @@ PYFDL_SECTIONS: Sections = Sections(
 )
 
 
-class Configuration(ConfigurationProperties):
+class Configuration(ConfigurationProperties, metaclass=SingletonV3):
 
     def __init__(self):
         super().__init__(baseFileName='pyfdl.ini', moduleName='pyfdl', sections=PYFDL_SECTIONS)

@@ -30,6 +30,15 @@ class TestConfiguration(UnitTestBase):
     def tearDown(self):
         super().tearDown()
 
+    def testSingleton(self):
+
+        configuration: Configuration = Configuration()
+
+        original:     str = f'{hex(id(self._configuration))}'
+        doppleGanger: str = f'{hex(id(configuration))}'
+
+        self.assertEqual(original, doppleGanger, 'IDs should be valid')
+
     def testDeserializeFloat(self):
 
         damping: float = self._configuration.damping
