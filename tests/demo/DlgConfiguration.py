@@ -16,6 +16,7 @@ from wx import EVT_SPINCTRL
 from wx import ID_CANCEL
 from wx import ID_OK
 from wx import OK
+from wx import PostEvent
 from wx import SL_AUTOTICKS
 from wx import SL_BOTTOM
 from wx import SL_HORIZONTAL
@@ -44,6 +45,8 @@ from codeallyadvanced.ui.widgets.PositionControl import PositionControl
 from pyfdl.Configuration import Configuration
 from pyfdl.Point import Point
 
+from tests.demo.DemoTypes import ForceDirectedLayoutEvent
+from tests.demo.DemoTypes import ResetDiagramEvent
 from tests.demo.DialSelector import DialSelectorParameters
 from tests.demo.DialSelector import DialSelector
 
@@ -60,8 +63,8 @@ class DlgConfiguration(SizedDialog):
 
         super().__init__(parent, title='Force Directed Configuration', size=dlgSize, style=style)
 
-        self._configuration: Configuration = Configuration()
-
+        self._configuration:   Configuration = Configuration()
+        self._listeningWindow: Window        = parent
         self.logger: Logger = getLogger(__name__)
 
         sizedPanel: SizedPanel = self.GetContentsPane()
@@ -109,7 +112,7 @@ class DlgConfiguration(SizedDialog):
         self._btnCancel = Button(buttonPanel, ID_CANCEL, '&Cancel')
         self._btnOk     = Button(buttonPanel, ID_OK, '&Ok')
 
-        self.Bind(EVT_BUTTON, self._onReset, resetButton)
+        self.Bind(EVT_BUTTON, self._onReset,   resetButton)
         self.Bind(EVT_BUTTON, self._onArrange, arrangeButton)
         self.Bind(EVT_BUTTON, self._onOk,    self._btnOk)
         self.Bind(EVT_BUTTON, self._onClose, self._btnCancel)
@@ -234,11 +237,11 @@ class DlgConfiguration(SizedDialog):
 
     # noinspection PyUnusedLocal
     def _onArrange(self, event: CommandEvent):
-        pass
+        PostEvent(dest=self._listeningWindow, event=ForceDirectedLayoutEvent())
 
     # noinspection PyUnusedLocal
     def _onReset(self, event: CommandEvent):
-        pass
+        PostEvent(dest=self._listeningWindow, event=ResetDiagramEvent())
 
     def _onMinXY(self, position: Position):
         self._configuration.minPoint = Point(x=position.x, y=position.y)

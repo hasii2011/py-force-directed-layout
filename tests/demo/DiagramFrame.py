@@ -1,30 +1,21 @@
 
-from logging import Logger
-from logging import getLogger
-from random import randint
 from typing import cast
 
-from wx import BLACK
-from wx import BLACK_BRUSH
-from wx import BLUE
-from wx import BLUE_BRUSH
+from logging import Logger
+from logging import getLogger
+
 from wx import Bitmap
 from wx import Brush
 from wx import Colour
 from wx import DC
 from wx import EVT_PAINT
-from wx import GREEN_BRUSH
-from wx import GREEN_PEN
 from wx import LIGHT_GREY
 from wx import MemoryDC
 from wx import PENSTYLE_DOT
-from wx import PENSTYLE_SOLID
 from wx import PaintDC
 from wx import PaintEvent
 from wx import Pen
 from wx import PenInfo
-from wx import RED_BRUSH
-from wx import RED_PEN
 from wx import Rect
 from wx import ScrolledWindow
 from wx import WHITE
@@ -38,18 +29,13 @@ from pyfdl.LayoutTypes import Nodes
 from pyfdl.Node import Node
 from pyfdl.Point import Point
 
-from tests.demo.SpotNode import SpotNode
-
 DEFAULT_WIDTH = 3000
 A4_FACTOR:    float = 1.41
 
 PIXELS_PER_UNIT_X: int = 20
 PIXELS_PER_UNIT_Y: int = 20
 
-MIN_X: int = 10
-MAX_X: int = 800
-MIN_Y: int = 20
-MAX_Y: int = 600
+NO_LAYOUT_ENGINE: LayoutEngine = cast(LayoutEngine, None)
 
 
 class DiagramFrame(ScrolledWindow):
@@ -60,10 +46,8 @@ class DiagramFrame(ScrolledWindow):
 
         self.logger: Logger = getLogger(__name__)
 
-        self._layoutEngine: LayoutEngine = LayoutEngine()
+        self._layoutEngine: LayoutEngine = NO_LAYOUT_ENGINE
 
-        self._generateRandomDiagram(layoutEngine=self._layoutEngine)
-        # self._generateFixedDiagram(diagram=self._diagram)
         self.maxWidth:  int  = DEFAULT_WIDTH
         self.maxHeight: int = int(self.maxWidth / A4_FACTOR)  # 1.41 is for A4 support
 
@@ -153,6 +137,7 @@ class DiagramFrame(ScrolledWindow):
         Returns: A device context
         """
         dc: MemoryDC = MemoryDC()
+
         bm = self._workingBitmap
         # cache the bitmap, to avoid creating a new one at each refresh.
         # only recreate it if the size of the window has changed
@@ -205,72 +190,6 @@ class DiagramFrame(ScrolledWindow):
         pen:           Pen    = Pen(PenInfo(gridLineColor).Style(gridLineStyle).Width(1))
 
         return pen
-
-    def _generateRandomDiagram(self, layoutEngine: LayoutEngine):
-
-        bluePen:  Pen = Pen(colour=BLUE, width=1,  style=PENSTYLE_SOLID)
-        blackPen: Pen = Pen(colour=BLACK, width=1, style=PENSTYLE_SOLID)
-
-        parentNode: SpotNode = SpotNode(stroke=blackPen, fill=BLACK_BRUSH)
-        parentNode.location  = Point(x=randint(1, 600), y=randint(1, 500))
-
-        layoutEngine.addNode(parentNode)
-
-        childrenCount: int = randint(1, 5)
-        for x in range(childrenCount):
-            childNode: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
-            childNode.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-            parentNode.addChild(childNode)
-            layoutEngine.addNode(childNode)
-
-            grandChildrenCount: int = randint(0, 5)
-            for y in range(grandChildrenCount):
-                grandChildNode: SpotNode = SpotNode(stroke=GREEN_PEN, fill=GREEN_BRUSH)
-                grandChildNode.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-                childNode.addChild(grandChildNode)
-                layoutEngine.addNode(grandChildNode)
-
-                greatGrandChildrenCount: int = randint(0, 5)
-                for z in range(greatGrandChildrenCount):
-                    greatGrandChildNode: SpotNode = SpotNode(stroke=RED_PEN, fill=RED_BRUSH)
-                    greatGrandChildNode.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-                    grandChildNode.addChild(greatGrandChildNode)
-                    layoutEngine.addNode(grandChildNode)
-
-    def _generateFixedDiagram(self, layoutEngine: LayoutEngine):
-
-        blackPen: Pen = Pen(colour=BLACK, width=1, style=PENSTYLE_SOLID)
-
-        parentNode: SpotNode = SpotNode(stroke=blackPen, fill=BLACK_BRUSH)
-        parentNode.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-        parentNode = self._generateParentHierarchy(parentNode=parentNode, layoutEngine=layoutEngine)
-        layoutEngine.addNode(parentNode)
-
-        parentNode2: SpotNode = SpotNode(stroke=blackPen, fill=BLACK_BRUSH)
-        parentNode2.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-        parentNode2 = self._generateParentHierarchy(parentNode=parentNode2, layoutEngine=layoutEngine)
-        layoutEngine.addNode(parentNode2)
-
-    def _generateParentHierarchy(self, layoutEngine: LayoutEngine, parentNode: SpotNode) -> SpotNode:
-
-        bluePen:  Pen = Pen(colour=BLUE, width=1,  style=PENSTYLE_SOLID)
-        childNode1: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
-        childNode2: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
-        childNode3: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
-
-        childNode1.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-        childNode2.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-        childNode3.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-
-        layoutEngine.addNode(childNode1)
-        layoutEngine.addNode(childNode2)
-        layoutEngine.addNode(childNode3)
-
-        parentNode.addChild(childNode1)
-        parentNode.addChild(childNode2)
-        parentNode.addChild(childNode3)
-
-        return parentNode
 
     def _computeShapeCenter(self, node: Node) -> Point:
 

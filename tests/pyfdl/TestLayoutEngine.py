@@ -118,6 +118,10 @@ class TestLayoutEngine(UnitTestBase):
         self.assertEqual(expectedForce, attractionForce, 'Attraction force miscalculation')
 
     def testCalculateRepulsionForce(self):
+
+        saveRepulsionForce: float = self._configuration.repulsionForce
+
+        self._configuration.repulsionForce = 10000
         layoutEngine: LayoutEngine = LayoutEngine()
 
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
@@ -125,15 +129,23 @@ class TestLayoutEngine(UnitTestBase):
         expectedForce:  Vector = Vector(magnitude=0.03133, direction=45.00)
         repulsionForce: Vector = layoutEngine._calculateRepulsionForce(x=creatingForceNode, y=actingOnNode)
 
+        self._configuration.repulsionForce = saveRepulsionForce
+
         self.assertEqual(expectedForce, repulsionForce, 'Repulsion force miscalculation')
 
     def testCalculateRepulsionForceInverse(self):
+
+        saveRepulsionForce: float = self._configuration.repulsionForce
+
+        self._configuration.repulsionForce = 10000
         layoutEngine: LayoutEngine = LayoutEngine()
 
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
 
         expectedForce:  Vector = Vector(magnitude=0.03133, direction=225.00)
         repulsionForce: Vector = layoutEngine._calculateRepulsionForce(x=actingOnNode, y=creatingForceNode)
+
+        self._configuration.repulsionForce = saveRepulsionForce
 
         self.assertEqual(expectedForce, repulsionForce, 'Repulsion force miscalculation')
 
