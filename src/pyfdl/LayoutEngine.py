@@ -27,11 +27,6 @@ from pyfdl.Rectangle import Rectangle
 from pyfdl.NodeLayoutInformation import NodeLayoutInformation
 from pyfdl.NodeLayoutInformation import NodeLayoutInformationList
 
-MIN_RANDOM_X: int = 10     # TODO Configurable
-MAX_RANDOM_X: int = 60     # TODO Configurable
-MIN_RANDOM_Y: int = 10     # TODO Configurable
-MAX_RANDOM_Y: int = 60     # TODO Configurable
-
 ORIGIN_POINT: Point = Point(0, 0)
 
 
@@ -250,7 +245,12 @@ class LayoutEngine:
         layout: NodeLayoutInformationList = NodeLayoutInformationList([])
         for node in self._nodes:
             diagramNode: Node = node
-            diagramNode.location = Point(x=randint(MIN_RANDOM_X, MAX_RANDOM_X), y=randint(MIN_RANDOM_Y, MAX_RANDOM_Y))
+            minRandomX: int = self._configuration.minPoint.x
+            minRandomY: int = self._configuration.minPoint.y
+            maxRandomX: int = self._configuration.maxPoint.x
+            maxRandomY: int = self._configuration.maxPoint.x
+
+            diagramNode.location = Point(x=randint(minRandomX, maxRandomX), y=randint(minRandomY, maxRandomY))
 
             layoutInformation: NodeLayoutInformation = NodeLayoutInformation(node=diagramNode,
                                                                              velocity=Vector(magnitude=0, direction=0),
