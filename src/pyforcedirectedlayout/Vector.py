@@ -9,7 +9,7 @@ from math import pi
 from math import sin
 from math import sqrt
 
-from pyfdl.Point import Point
+from pyforcedirectedlayout.Point import Point
 
 PI_180: float = pi / 180.0
 

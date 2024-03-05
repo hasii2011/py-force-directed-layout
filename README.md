@@ -17,7 +17,7 @@ running on Mac OS.  I will not go into detail on what those bumps were.  But I w
 ## Install in your virtual environment
 
 ```bash
-pip install pyfdl
+pip install pyforcedirectedlayout
 ```
 
 ## Configuration details

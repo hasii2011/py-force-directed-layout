@@ -8,16 +8,16 @@ from unittest import main as unitTestMain
 
 from codeallybasic.UnitTestBase import UnitTestBase
 
-from pyfdl.Configuration import Configuration
-from pyfdl.LayoutEngine import LayoutEngine
-from pyfdl.LayoutEngine import ORIGIN_POINT
-from pyfdl.Node import Node
-from pyfdl.NodeLayoutInformation import NodeLayoutInformation
+from pyforcedirectedlayout.Configuration import Configuration
+from pyforcedirectedlayout.LayoutEngine import LayoutEngine
+from pyforcedirectedlayout.LayoutEngine import ORIGIN_POINT
+from pyforcedirectedlayout.Node import Node
+from pyforcedirectedlayout.NodeLayoutInformation import NodeLayoutInformation
 
-from pyfdl.NodeLayoutInformation import NodeLayoutInformationList
+from pyforcedirectedlayout.NodeLayoutInformation import NodeLayoutInformationList
 
-from pyfdl.Point import Point
-from pyfdl.Vector import Vector
+from pyforcedirectedlayout.Point import Point
+from pyforcedirectedlayout.Vector import Vector
 
 from tests.pyfdl.FakeNode import FakeNode
 

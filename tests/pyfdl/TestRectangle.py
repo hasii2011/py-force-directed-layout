@@ -3,7 +3,7 @@ from unittest import main as unitTestMain
 
 from codeallybasic.UnitTestBase import UnitTestBase
 
-from pyfdl.Rectangle import Rectangle
+from pyforcedirectedlayout.Rectangle import Rectangle
 
 
 class TestRectangle(UnitTestBase):

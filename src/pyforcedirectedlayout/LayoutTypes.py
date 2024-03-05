@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
-    from pyfdl.Node import Node
+    from pyforcedirectedlayout.Node import Node
 
 Nodes = NewType('Nodes', List['Node'])
 

@@ -9,15 +9,15 @@ from logging import getLogger
 from abc import ABC
 from abc import abstractmethod
 
-from pyfdl.LayoutTypes import DrawingContext
+from pyforcedirectedlayout.LayoutTypes import DrawingContext
 
-from pyfdl.Point import Point
-from pyfdl.Size import Size
+from pyforcedirectedlayout.Point import Point
+from pyforcedirectedlayout.Size import Size
 
 if TYPE_CHECKING:
-    from pyfdl.LayoutEngine import LayoutEngine
+    from pyforcedirectedlayout.LayoutEngine import LayoutEngine
 
-from pyfdl.LayoutTypes import Nodes
+from pyforcedirectedlayout.LayoutTypes import Nodes
 
 
 class Node(ABC):

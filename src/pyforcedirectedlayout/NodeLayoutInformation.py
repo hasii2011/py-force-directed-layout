@@ -4,9 +4,9 @@ from typing import NewType
 
 from dataclasses import dataclass
 
-from pyfdl.Node import Node
-from pyfdl.Point import Point
-from pyfdl.Vector import Vector
+from pyforcedirectedlayout.Node import Node
+from pyforcedirectedlayout.Point import Point
+from pyforcedirectedlayout.Vector import Vector
 
 
 @dataclass

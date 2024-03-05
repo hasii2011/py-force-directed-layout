@@ -10,7 +10,7 @@ from codeallybasic.ConfigurationProperties import Sections
 from codeallybasic.ConfigurationProperties import configurationGetter
 from codeallybasic.ConfigurationProperties import configurationSetter
 
-from pyfdl.Point import Point
+from pyforcedirectedlayout.Point import Point
 
 # these are for the arrange method
 SECTION_ARRANGE: Section = Section(
@@ -57,7 +57,7 @@ PYFDL_SECTIONS: Sections = Sections(
 class Configuration(ConfigurationProperties, metaclass=SingletonV3):
 
     def __init__(self):
-        super().__init__(baseFileName='pyfdl.ini', moduleName='pyfdl', sections=PYFDL_SECTIONS)
+        super().__init__(baseFileName='pyforcedirectedlayout.ini', moduleName='pyforcedirectedlayout', sections=PYFDL_SECTIONS)
 
     @property
     @configurationGetter(sectionName=ARRANGE_SECTION_NAME, deserializeFunction=float)

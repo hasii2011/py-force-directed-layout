@@ -3,8 +3,8 @@ from unittest import main as unitTestMain
 
 from codeallybasic.UnitTestBase import UnitTestBase
 
-from pyfdl.Configuration import Configuration
-from pyfdl.Point import Point
+from pyforcedirectedlayout.Configuration import Configuration
+from pyforcedirectedlayout.Point import Point
 
 
 # import the class you want to test here

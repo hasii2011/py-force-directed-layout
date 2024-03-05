@@ -1,9 +1,9 @@
 
 from wx import DC
 
-from pyfdl.Node import Node
-from pyfdl.Point import Point
-from pyfdl.Size import Size
+from pyforcedirectedlayout.Node import Node
+from pyforcedirectedlayout.Point import Point
+from pyforcedirectedlayout.Size import Size
 
 
 class FakeNode(Node):

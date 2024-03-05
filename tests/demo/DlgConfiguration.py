@@ -45,8 +45,8 @@ from codeallyadvanced.ui.widgets.PositionControl import PositionControl
 from codeallyadvanced.ui.widgets.DialSelector import DialSelectorParameters
 from codeallyadvanced.ui.widgets.DialSelector import DialSelector
 
-from pyfdl.Configuration import Configuration
-from pyfdl.Point import Point
+from pyforcedirectedlayout.Configuration import Configuration
+from pyforcedirectedlayout.Point import Point
 
 from tests.demo.DemoTypes import ForceDirectedLayoutEvent
 from tests.demo.DemoTypes import ResetDiagramEvent

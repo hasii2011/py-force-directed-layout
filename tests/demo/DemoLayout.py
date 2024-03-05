@@ -38,9 +38,9 @@ from wx.lib.sized_controls import SizedPanel
 
 from codeallybasic.UnitTestBase import UnitTestBase
 
-from pyfdl.LayoutEngine import LayoutEngine
-from pyfdl.LayoutTypes import LayoutStatus
-from pyfdl.Point import Point
+from pyforcedirectedlayout.LayoutEngine import LayoutEngine
+from pyforcedirectedlayout.LayoutTypes import LayoutStatus
+from pyforcedirectedlayout.Point import Point
 
 from tests.demo.DemoTypes import EVT_FORCED_DIRECTED_LAYOUT
 from tests.demo.DemoTypes import EVT_RESET_DIAGRAM

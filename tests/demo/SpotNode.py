@@ -9,9 +9,9 @@ from wx import DC
 from wx import Pen
 from wx import WHITE_BRUSH
 
-from pyfdl.Node import Node
-from pyfdl.Point import Point
-from pyfdl.Size import Size
+from pyforcedirectedlayout.Node import Node
+from pyforcedirectedlayout.Point import Point
+from pyforcedirectedlayout.Size import Size
 
 
 DEFAULT_PEN:   Pen   = BLACK_PEN

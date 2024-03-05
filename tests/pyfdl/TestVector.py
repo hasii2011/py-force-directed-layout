@@ -4,8 +4,8 @@ from unittest import main as unitTestMain
 
 from codeallybasic.UnitTestBase import UnitTestBase
 
-from pyfdl.Point import Point
-from pyfdl.Vector import Vector
+from pyforcedirectedlayout.Point import Point
+from pyforcedirectedlayout.Vector import Vector
 
 
 class TestVector(UnitTestBase):

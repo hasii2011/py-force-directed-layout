@@ -24,10 +24,10 @@ from wx import Window
 # noinspection PyUnresolvedReferences
 from wx.core import PenStyle
 
-from pyfdl.LayoutEngine import LayoutEngine
-from pyfdl.LayoutTypes import Nodes
-from pyfdl.Node import Node
-from pyfdl.Point import Point
+from pyforcedirectedlayout.LayoutEngine import LayoutEngine
+from pyforcedirectedlayout.LayoutTypes import Nodes
+from pyforcedirectedlayout.Node import Node
+from pyforcedirectedlayout.Point import Point
 
 DEFAULT_WIDTH = 3000
 A4_FACTOR:    float = 1.41

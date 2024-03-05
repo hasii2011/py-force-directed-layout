@@ -16,16 +16,16 @@ from random import randint
 from uuid import uuid4
 from uuid import UUID
 
-from pyfdl.Configuration import Configuration
-from pyfdl.LayoutTypes import LayoutStatus
-from pyfdl.LayoutTypes import LayoutStatusCallback
-from pyfdl.Node import Node
-from pyfdl.Point import Point
-from pyfdl.Vector import Vector
-from pyfdl.LayoutTypes import Nodes
-from pyfdl.Rectangle import Rectangle
-from pyfdl.NodeLayoutInformation import NodeLayoutInformation
-from pyfdl.NodeLayoutInformation import NodeLayoutInformationList
+from pyforcedirectedlayout.Configuration import Configuration
+from pyforcedirectedlayout.LayoutTypes import LayoutStatus
+from pyforcedirectedlayout.LayoutTypes import LayoutStatusCallback
+from pyforcedirectedlayout.Node import Node
+from pyforcedirectedlayout.Point import Point
+from pyforcedirectedlayout.Vector import Vector
+from pyforcedirectedlayout.LayoutTypes import Nodes
+from pyforcedirectedlayout.Rectangle import Rectangle
+from pyforcedirectedlayout.NodeLayoutInformation import NodeLayoutInformation
+from pyforcedirectedlayout.NodeLayoutInformation import NodeLayoutInformationList
 
 ORIGIN_POINT: Point = Point(0, 0)
 
