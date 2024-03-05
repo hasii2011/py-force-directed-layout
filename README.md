@@ -2,7 +2,7 @@
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/hasii2011/pyfdl/tree/master.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/hasii2011/pyfdl/tree/master)
-[![PyPI version](https://badge.fury.io/py/pyfdl.svg)](https://badge.fury.io/py/pyutmodelv2)
+[![PyPI version](https://badge.fury.io/py/pyfdl.svg)](https://badge.fury.io/py/pyfdl)
 
 
 # Introduction
