@@ -1,14 +1,14 @@
 
 from codeallybasic.SingletonV3 import SingletonV3
 
-from pyfdl.ConfigurationProperties import ConfigurationNameValue
-from pyfdl.ConfigurationProperties import ConfigurationProperties
-from pyfdl.ConfigurationProperties import PropertyName
-from pyfdl.ConfigurationProperties import Section
-from pyfdl.ConfigurationProperties import SectionName
-from pyfdl.ConfigurationProperties import Sections
-from pyfdl.ConfigurationProperties import configurationGetter
-from pyfdl.ConfigurationProperties import configurationSetter
+from codeallybasic.ConfigurationProperties import ConfigurationNameValue
+from codeallybasic.ConfigurationProperties import ConfigurationProperties
+from codeallybasic.ConfigurationProperties import PropertyName
+from codeallybasic.ConfigurationProperties import Section
+from codeallybasic.ConfigurationProperties import SectionName
+from codeallybasic.ConfigurationProperties import Sections
+from codeallybasic.ConfigurationProperties import configurationGetter
+from codeallybasic.ConfigurationProperties import configurationSetter
 
 from pyfdl.Point import Point
 

@@ -12,7 +12,9 @@ authors = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@gmail
 maintainers = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@gmail.com'}]
 keywords = ['layout', 'diagram', 'python',]
 
-dependencies = []
+dependencies = [
+    'codeallybasic>=1.2.0',
+]
 
 [project.urls]
 Repository = 'https://github.com/pyfdl'
@@ -22,7 +24,7 @@ Repository = 'https://github.com/pyfdl'
 where = ['src']
 
 [tool.setuptools.package-data]
-pyutmodel = ['py.typed']
+pyfdl = ['py.typed']
 
 [tool.setuptools.dynamic]
 version = {attr = 'pyfdl.__version__'}

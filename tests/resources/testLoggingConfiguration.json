@@ -39,7 +39,7 @@
             "propagate": "False"
         },
         "tests.demo.DialSelector": {
-            "level":     "DEBUG",
+            "level":     "INFO",
             "propagate": "False"
         }
     }

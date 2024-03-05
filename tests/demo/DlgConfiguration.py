@@ -40,15 +40,16 @@ from wx.lib.sized_controls import SizedPanel
 from wx.lib.sized_controls import SizedStaticBox
 
 from codeallybasic.Position import Position
+
 from codeallyadvanced.ui.widgets.PositionControl import PositionControl
+from codeallyadvanced.ui.widgets.DialSelector import DialSelectorParameters
+from codeallyadvanced.ui.widgets.DialSelector import DialSelector
 
 from pyfdl.Configuration import Configuration
 from pyfdl.Point import Point
 
 from tests.demo.DemoTypes import ForceDirectedLayoutEvent
 from tests.demo.DemoTypes import ResetDiagramEvent
-from tests.demo.DialSelector import DialSelectorParameters
-from tests.demo.DialSelector import DialSelector
 
 NO_DIAL_SELECTOR: DialSelector = cast(DialSelector, None)
 NO_BUTTON:        Button       = cast(Button, None)
