@@ -4,11 +4,8 @@ from unittest import main as unitTestMain
 from codeallybasic.UnitTestBase import UnitTestBase
 
 from pyforcedirectedlayout.Configuration import Configuration
-from pyforcedirectedlayout.Point import Point
 
-
-# import the class you want to test here
-# from org.pyut.template import template
+from tests.demo.MinMaxControl import MinMax
 
 
 class TestConfiguration(UnitTestBase):
@@ -49,10 +46,15 @@ class TestConfiguration(UnitTestBase):
         springLength: int = self._configuration.springLength
         self.assertTrue(isinstance(springLength, int), 'Wrong type')
 
-    def testDeserializePoint(self):
+    def testDeserializeMinMaxX(self):
 
-        minPoint: Point = self._configuration.minPoint
-        self.assertTrue(isinstance(minPoint, Point), 'Wrong type')
+        minMaxX: MinMax = self._configuration.minMaxX
+        self.assertTrue(isinstance(minMaxX, MinMax), 'Wrong type')
+
+    def testDeserializeMinMaxY(self):
+
+        minMaxY: MinMax = self._configuration.minMaxY
+        self.assertTrue(isinstance(minMaxY, MinMax), 'Wrong type')
 
     def testFactorsProperties(self):
         stopCount: int = self._configuration.stopCount

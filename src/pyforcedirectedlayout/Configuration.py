@@ -10,7 +10,18 @@ from codeallybasic.ConfigurationProperties import Sections
 from codeallybasic.ConfigurationProperties import configurationGetter
 from codeallybasic.ConfigurationProperties import configurationSetter
 
-from pyforcedirectedlayout.Point import Point
+from tests.demo.MinMaxControl import MinMax
+
+X_RANGE_MIN: int = -1024
+X_RANGE_MAX: int = 1024
+Y_RANGE_MIN: int = -1024
+Y_RANGE_MAX: int = 1024
+
+DEFAULT_MIN_X_COORDINATE: int = -50
+DEFAULT_MAX_X_COORDINATE: int = 50
+DEFAULT_MIN_Y_COORDINATE: int = -50
+DEFAULT_MAX_Y_COORDINATE: int = 50
+
 
 # these are for the arrange method
 SECTION_ARRANGE: Section = Section(
@@ -26,8 +37,8 @@ SECTION_ARRANGE: Section = Section(
 # these randomize the layout
 SECTION_RANDOMIZE: Section = Section(
     [
-        ConfigurationNameValue(name=PropertyName('minPoint'), defaultValue=Point(x=10, y=10).__repr__()),
-        ConfigurationNameValue(name=PropertyName('maxPoint'), defaultValue=Point(x=60, y=60).__repr__()),
+        ConfigurationNameValue(name=PropertyName('minMaxX'), defaultValue=MinMax(minValue=DEFAULT_MIN_X_COORDINATE, maxValue=DEFAULT_MAX_X_COORDINATE).__repr__()),
+        ConfigurationNameValue(name=PropertyName('minMaxY'), defaultValue=MinMax(minValue=DEFAULT_MIN_Y_COORDINATE, maxValue=DEFAULT_MAX_Y_COORDINATE).__repr__()),
     ]
 )
 """
@@ -57,7 +68,7 @@ PYFDL_SECTIONS: Sections = Sections(
 class Configuration(ConfigurationProperties, metaclass=SingletonV3):
 
     def __init__(self):
-        super().__init__(baseFileName='pyforcedirectedlayout.ini', moduleName='pyforcedirectedlayout', sections=PYFDL_SECTIONS)
+        super().__init__(baseFileName='pyfdl.ini', moduleName='pydfl', sections=PYFDL_SECTIONS)
 
     @property
     @configurationGetter(sectionName=ARRANGE_SECTION_NAME, deserializeFunction=float)
@@ -110,23 +121,23 @@ class Configuration(ConfigurationProperties, metaclass=SingletonV3):
         pass
 
     @property
-    @configurationGetter(sectionName=RANDOMIZE_SECTION_NAME, deserializeFunction=Point.deSerialize)
-    def minPoint(self) -> Point:
-        return Point()
+    @configurationGetter(sectionName=RANDOMIZE_SECTION_NAME, deserializeFunction=MinMax.deSerialize)
+    def minMaxX(self) -> MinMax:
+        return MinMax()
 
-    @minPoint.setter
+    @minMaxX.setter
     @configurationSetter(sectionName=RANDOMIZE_SECTION_NAME)
-    def minPoint(self, newValue: Point):
+    def minMaxX(self, newValue: MinMax):
         pass
 
     @property
-    @configurationGetter(sectionName=RANDOMIZE_SECTION_NAME, deserializeFunction=Point.deSerialize)
-    def maxPoint(self) -> Point:
-        return Point()
+    @configurationGetter(sectionName=RANDOMIZE_SECTION_NAME, deserializeFunction=MinMax.deSerialize)
+    def minMaxY(self) -> MinMax:
+        return MinMax()
 
-    @maxPoint.setter
+    @minMaxY.setter
     @configurationSetter(sectionName=RANDOMIZE_SECTION_NAME)
-    def maxPoint(self, newValue: Point):
+    def minMaxY(self, newValue: MinMax):
         pass
 
     @property

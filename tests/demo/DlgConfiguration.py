@@ -39,17 +39,20 @@ from wx.lib.sized_controls import SizedDialog
 from wx.lib.sized_controls import SizedPanel
 from wx.lib.sized_controls import SizedStaticBox
 
-from codeallybasic.Position import Position
-
-from codeallyadvanced.ui.widgets.PositionControl import PositionControl
 from codeallyadvanced.ui.widgets.DialSelector import DialSelectorParameters
 from codeallyadvanced.ui.widgets.DialSelector import DialSelector
 
 from pyforcedirectedlayout.Configuration import Configuration
-from pyforcedirectedlayout.Point import Point
+
+from pyforcedirectedlayout.Configuration import X_RANGE_MAX
+from pyforcedirectedlayout.Configuration import X_RANGE_MIN
+from pyforcedirectedlayout.Configuration import Y_RANGE_MAX
+from pyforcedirectedlayout.Configuration import Y_RANGE_MIN
 
 from tests.demo.DemoTypes import ForceDirectedLayoutEvent
 from tests.demo.DemoTypes import ResetDiagramEvent
+from tests.demo.MinMaxControl import MinMax
+from tests.demo.MinMaxControl import MinMaxControl
 
 NO_DIAL_SELECTOR: DialSelector = cast(DialSelector, None)
 NO_BUTTON:        Button       = cast(Button, None)
@@ -169,7 +172,6 @@ class DlgConfiguration(SizedDialog):
         self._maxIterations = maxIterations
 
     def _layoutRandomizeParameters(self, parentPanel: SizedPanel):
-        from codeallybasic.Position import Position
 
         localPanel: SizedStaticBox = SizedStaticBox(parentPanel, label='Randomize Initial Layout Parameters')
         localPanel.SetSizerType('vertical')
@@ -179,19 +181,17 @@ class DlgConfiguration(SizedDialog):
         horizontalPanel.SetSizerType('horizontal')
         horizontalPanel.SetSizerProps(expand=True, proportion=1)
 
-        minCoordinate: PositionControl = PositionControl(sizedPanel=horizontalPanel, displayText='Minimum X/Y',
-                                                         minValue=10, maxValue=1024,
-                                                         valueChangedCallback=self._onMinXY,
-                                                         setControlsSize=False)
-        minPoint: Point = self._configuration.minPoint
-        minCoordinate.position = Position(x=minPoint.x, y=minPoint.y)
+        minMaxX: MinMaxControl = MinMaxControl(sizedPanel=horizontalPanel, displayText='Minimum/Maximum X Value',
+                                               minValue=X_RANGE_MIN, maxValue=X_RANGE_MAX,
+                                               valueChangedCallback=self._onMinMaxX,
+                                               setControlsSize=False)
+        minMaxX.minMax = self._configuration.minMaxX
 
-        maxCoordinate: PositionControl = PositionControl(sizedPanel=horizontalPanel, displayText='Maximum X/Y',
-                                                         minValue=10, maxValue=1024,
-                                                         valueChangedCallback=self._onMaxXY,
-                                                         setControlsSize=False)
-        maxPoint: Point = self._configuration.maxPoint
-        maxCoordinate.position = Position(x=maxPoint.x, y=maxPoint.y)
+        minMaxY: MinMaxControl = MinMaxControl(sizedPanel=horizontalPanel, displayText='Minimum/Maximum Y Value',
+                                               minValue=Y_RANGE_MIN, maxValue=Y_RANGE_MAX,
+                                               valueChangedCallback=self._onMinMaxY,
+                                               setControlsSize=False)
+        minMaxY.minMax = self._configuration.minMaxY
 
     def _layoutAlgorithmParameters(self, parentPanel: SizedPanel):
 
@@ -244,11 +244,11 @@ class DlgConfiguration(SizedDialog):
     def _onReset(self, event: CommandEvent):
         PostEvent(dest=self._listeningWindow, event=ResetDiagramEvent())
 
-    def _onMinXY(self, position: Position):
-        self._configuration.minPoint = Point(x=position.x, y=position.y)
+    def _onMinMaxX(self, minMaxX: MinMax):
+        self._configuration.minMaxY = minMaxX
 
-    def _onMaxXY(self, position: Position):
-        self._configuration.maxPoint = Point(x=position.x, y=position.y)
+    def _onMinMaxY(self, minMaxY: MinMax):
+        self._configuration.minMaxY = minMaxY
 
     def _layoutSlider(self, parentPanel, label: str, value: int,  minValue: int, maxValue: int) -> Slider:
 

@@ -26,20 +26,16 @@
             "level": "INFO",
             "propagate": "False"
         },
-        "forcedirectedlayout": {
+        "pyforcedirectedlayout": {
             "level":     "INFO",
             "propagate": "True"
         },
         "tests": {
-            "level":     "INFO",
+            "level":     "WARNING",
             "propagate": "False"
         },
         "codeallybasic.UnitTestBase": {
-            "level":     "INFO",
-            "propagate": "False"
-        },
-        "tests.demo.DialSelector": {
-            "level":     "INFO",
+            "level":     "WARNING",
             "propagate": "False"
         }
     }

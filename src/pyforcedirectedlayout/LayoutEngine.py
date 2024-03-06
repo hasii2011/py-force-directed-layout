@@ -176,8 +176,10 @@ class LayoutEngine:
             if totalDisplacement < self._configuration.minimumTotalDisplacement:
                 stopCount += 1
             if stopCount > self._configuration.stopCount:
+                self.logger.info(f'Exiting early: {totalDisplacement=} {stopCount=}')
                 break
             if iterations >= self._configuration.maxIterations:
+                self.logger.info(f'Exiting exceeded maxIterations: {iterations=}')
                 break
 
             layoutStatus.totalDisplacement = totalDisplacement
