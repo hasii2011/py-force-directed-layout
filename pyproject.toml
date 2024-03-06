@@ -27,4 +27,4 @@ where = ['src']
 pyfdl = ['py.typed']
 
 [tool.setuptools.dynamic]
-version = {attr = 'pyfdl.__version__'}
+version = {attr = 'pyforcedirectedlayout.__version__'}
