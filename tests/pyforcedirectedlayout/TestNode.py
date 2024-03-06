@@ -8,7 +8,7 @@ from copy import deepcopy
 from codeallybasic.UnitTestBase import UnitTestBase
 
 from pyforcedirectedlayout.Point import Point
-from tests.pyfdl.FakeNode import FakeNode
+from tests.pyforcedirectedlayout.FakeNode import FakeNode
 
 
 def toObjectId(anObject: Any) -> str:

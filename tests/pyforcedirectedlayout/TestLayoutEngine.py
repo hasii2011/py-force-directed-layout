@@ -19,7 +19,7 @@ from pyforcedirectedlayout.NodeLayoutInformation import NodeLayoutInformationLis
 from pyforcedirectedlayout.Point import Point
 from pyforcedirectedlayout.Vector import Vector
 
-from tests.pyfdl.FakeNode import FakeNode
+from tests.pyforcedirectedlayout.FakeNode import FakeNode
 
 TwoFakeNodes = NewType('TwoFakeNodes', Tuple[FakeNode, FakeNode])
 
