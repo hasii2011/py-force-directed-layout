@@ -11,6 +11,8 @@ from wx import BLACK
 from wx import BLACK_BRUSH
 from wx import BLUE
 from wx import BLUE_BRUSH
+from wx import Brush
+from wx import Colour
 from wx import CommandEvent
 from wx import DEFAULT_FRAME_STYLE
 from wx import EVT_MENU
@@ -41,6 +43,7 @@ from codeallybasic.UnitTestBase import UnitTestBase
 from pyforcedirectedlayout.LayoutEngine import LayoutEngine
 from pyforcedirectedlayout.LayoutTypes import LayoutStatus
 from pyforcedirectedlayout.Point import Point
+from tests.demo.DemoColorEnum import DemoColorEnum
 
 from tests.demo.DemoTypes import EVT_FORCED_DIRECTED_LAYOUT
 from tests.demo.DemoTypes import EVT_RESET_DIAGRAM
@@ -49,6 +52,7 @@ from tests.demo.DemoTypes import ResetDiagramEvent
 
 from tests.demo.DiagramFrame import DiagramFrame
 from tests.demo.DlgConfiguration import DlgConfiguration
+from tests.demo.RectangleNode import RectangleNode
 from tests.demo.SpotNode import SpotNode
 
 FRAME_WIDTH:  int = 1280
@@ -87,7 +91,8 @@ class DemoLayout(App):
         # noinspection PyUnresolvedReferences
         self._diagramFrame.SetSizerProps(expand=True, proportion=1)
         self._diagramFrame.layoutEngine = LayoutEngine()
-        self._generateRandomDiagram(layoutEngine=self._diagramFrame.layoutEngine)
+        # self._generateRandomDiagram(layoutEngine=self._diagramFrame.layoutEngine)
+        self._generateFixDiagramRectangleNodes(layoutEngine=self._diagramFrame.layoutEngine)
 
         self._arrangeId = wxNewIdRef()
         self._createApplicationMenuBar()
@@ -158,7 +163,8 @@ class DemoLayout(App):
 
         self.logger.info(f'Old node count: {len(self._diagramFrame.layoutEngine.nodes)}')
         self._diagramFrame.layoutEngine = LayoutEngine()
-        self._generateRandomDiagram(layoutEngine=self._diagramFrame.layoutEngine)
+        # self._generateRandomDiagram(layoutEngine=self._diagramFrame.layoutEngine)
+        self._generateFixDiagramRectangleNodes(layoutEngine=self._diagramFrame.layoutEngine)
         self.logger.info(f'New node count: {len(self._diagramFrame.layoutEngine.nodes)}')
         self._diagramFrame.Refresh()
 
@@ -230,6 +236,44 @@ class DemoLayout(App):
         childNode1: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
         childNode2: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
         childNode3: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
+
+        childNode1.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+        childNode2.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+        childNode3.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+
+        layoutEngine.addNode(childNode1)
+        layoutEngine.addNode(childNode2)
+        layoutEngine.addNode(childNode3)
+
+        parentNode.addChild(childNode1)
+        parentNode.addChild(childNode2)
+        parentNode.addChild(childNode3)
+
+        return parentNode
+
+    def _generateFixDiagramRectangleNodes(self, layoutEngine: LayoutEngine):
+
+        fillColor: Colour = DemoColorEnum.toWxColor(DemoColorEnum.LIGHT_YELLOW)
+        brush:     Brush  = Brush(colour=fillColor)
+
+        parentNode: RectangleNode = RectangleNode(name='Parent Node 1', fill=brush)
+        parentNode.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+        parentNode = self._generateRectangleHierarchy(parentNode=parentNode, layoutEngine=layoutEngine)
+        layoutEngine.addNode(parentNode)
+
+        parentNode2: RectangleNode = RectangleNode(name='Parent Node 2', fill=brush)
+        parentNode2.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+        parentNode2 = self._generateRectangleHierarchy(parentNode=parentNode2, layoutEngine=layoutEngine)
+        layoutEngine.addNode(parentNode2)
+
+    def _generateRectangleHierarchy(self, layoutEngine: LayoutEngine, parentNode: RectangleNode) -> RectangleNode:
+
+        bluePen: Pen   = Pen(colour=BLUE, width=1,  style=PENSTYLE_SOLID)
+        brush:   Brush = Brush(colour=DemoColorEnum.toWxColor(DemoColorEnum.LIGHT_STEEL_BLUE))
+
+        childNode1: RectangleNode = RectangleNode(name='ChildNode1', stroke=bluePen, fill=brush)
+        childNode2: RectangleNode = RectangleNode(name='ChildNode2', stroke=bluePen, fill=brush)
+        childNode3: RectangleNode = RectangleNode(name='ChildNode2', stroke=bluePen, fill=brush)
 
         childNode1.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
         childNode2.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))

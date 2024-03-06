@@ -62,8 +62,8 @@ class Vector:
 
         Returns:
         """
-        x: float = -self._magnitude * cos((pi / 180.0) * -self._direction)
-        y: float = -self._magnitude * sin((pi / 180.0) * -self._direction)
+        x: float = self._magnitude * cos((pi / 180.0) * self._direction)
+        y: float = self._magnitude * sin((pi / 180.0) * self._direction)
 
         return Point(x=int(x), y=int(y))
 

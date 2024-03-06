@@ -40,7 +40,7 @@ class TestVector(UnitTestBase):
     def testToPointFlat(self):
         vector:    Vector = Vector(magnitude=5.0, direction=180.0)
 
-        expectedPoint: Point = Point(x=5, y=0)
+        expectedPoint: Point = Point(x=-5, y=0)
         actualPoint:   Point = vector.toPoint()
 
         self.assertEqual(expectedPoint, actualPoint, 'What the heck')

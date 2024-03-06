@@ -122,12 +122,10 @@ class LayoutEngine:
 
         return removed
 
-    def arrange(self, statusCallback: LayoutStatusCallback, deterministic:  bool = True):
+    def arrange(self, statusCallback: LayoutStatusCallback, deterministic:  bool = False):
         """
         Runs the force-directed layout algorithm on this Diagram, using the specified parameters.
 
-        TODO:   Update method signature to package the runtime values into a single dataclass aka
-        object
         Args:
             statusCallback
             deterministic:  Whether to use a random or deterministic layout.
@@ -182,19 +180,22 @@ class LayoutEngine:
             if iterations >= self._configuration.maxIterations:
                 break
 
-            # center the diagram around the origin
             layoutStatus.totalDisplacement = totalDisplacement
             layoutStatus.stopCount         = stopCount
             layoutStatus.iterations        = iterations
             layoutStatus.maxIterations     = self._configuration.maxIterations
 
             statusCallback(layoutStatus)
+        # center the diagram around the origin
         self._adjustNodes()
 
     def _adjustNodes(self):
         logicalBounds: Rectangle = self._getDiagramBounds()
-        midPoint:      Point     = Point(x=logicalBounds.x + (logicalBounds.width // 2),
-                                         y=logicalBounds.y + (logicalBounds.height // 2)
+        # midPoint:      Point     = Point(x=logicalBounds.x + (logicalBounds.width // 2),
+        #                                  y=logicalBounds.y + (logicalBounds.height // 2)
+        #                                  )
+        midPoint:      Point     = Point(x=logicalBounds.x + logicalBounds.width,
+                                         y=logicalBounds.y + logicalBounds.height
                                          )
         for n in self._nodes:
             node: Node = cast(Node, n)
@@ -231,7 +232,7 @@ class LayoutEngine:
         for p in self._nodes:
             parent: Node = cast(Node, p)
             if currentLayoutNode in parent.connections:
-                netForce += self._calculateAttractionForce(x=currentLayoutNode, y=p, springLength=springLength)
+                netForce += self._calculateAttractionForce(x=currentLayoutNode, y=parent, springLength=springLength)
 
         return netForce
 
@@ -245,13 +246,14 @@ class LayoutEngine:
         layout: NodeLayoutInformationList = NodeLayoutInformationList([])
         for node in self._nodes:
             diagramNode: Node = node
-            minRandomX: int = self._configuration.minPoint.x
-            minRandomY: int = self._configuration.minPoint.y
-            maxRandomX: int = self._configuration.maxPoint.x
-            maxRandomY: int = self._configuration.maxPoint.x
+            # minRandomX: int = self._configuration.minPoint.x
+            # maxRandomX: int = self._configuration.maxPoint.x
+            # minRandomY: int = self._configuration.minPoint.y
+            # maxRandomY: int = self._configuration.maxPoint.y
 
-            diagramNode.location = Point(x=randint(minRandomX, maxRandomX), y=randint(minRandomY, maxRandomY))
-
+            # diagramNode.location = Point(x=randint(minRandomX, maxRandomX), y=randint(minRandomY, maxRandomY))
+            diagramNode.location = Point(x=randint(-50, 50), y=randint(-50, 50))
+            # diagramNode.location = Point(x=randint(10, 100), y=randint(10, 100))
             layoutInformation: NodeLayoutInformation = NodeLayoutInformation(node=diagramNode,
                                                                              velocity=Vector(magnitude=0, direction=0),
                                                                              nextPosition=Point(),
@@ -272,30 +274,12 @@ class LayoutEngine:
         """
         proximity: int = max(LayoutEngine.calculateDistance(x.location, y.location), 1)
         # Hooke's Law: F = -kx
-        stiffnessValue: float = self._configuration.attractionForce
-        force: float = stiffnessValue * max(proximity - springLength, 0)
+        attraction: float = self._configuration.attractionForce
+        force: float = attraction * max(proximity - springLength, 0)
         angle: float = self._getBearingAngle(start=x.location, end=y.location)
 
         attractionVector: Vector = Vector(magnitude=force, direction=angle)
         return attractionVector
-
-    @classmethod
-    def calculateDistance(cls, a: Point, b: Point) -> int:
-        """
-        Calculates the distance between two points.
-
-        Args:
-            a:  The first point
-            b:  The second point
-
-        Returns: The pixel distance between the two points.
-        """
-        xDistance: float = a.x - b.x
-        yDistance: float = a.y - b.y
-
-        distance: float = sqrt(pow(xDistance, 2) + pow(yDistance, 2))
-
-        return int(distance)
 
     def _calculateRepulsionForce(self, x: Node, y: Node) -> Vector:
         """
@@ -337,22 +321,7 @@ class LayoutEngine:
 
         diffX: float = float(half.x - start.x)
         diffY: float = float(half.y - start.y)
-        # noinspection SpellCheckingInspection
-        """
-        if diffY == 0.0:
-            diffX = 0.001
-        if diffY == 0.0:
-            diffY = 0.001
 
-        if abs(diffX) > abs(diffY):
-            angle: float = tanh(diffY / diffX) * (180.0 / pi)
-            if ((diffX < 0) and (diffY > 0)) or ((diffX < 0) and (diffY < 0)):
-                angle += 180
-        else:
-            angle = tanh(diffX / diffY) * (180.0 / pi)
-            if ((diffY < 0) and (diffX > 0)) or ((diffY < 0) and (diffX < 0)):
-                angle = (180 - (angle + 90))
-        """
         if diffY != 0:
             angle: float = atan2(diffY, diffX) * (180.0 / pi)
         else:
@@ -371,9 +340,9 @@ class LayoutEngine:
 
         Returns:  Rectangle that fits exactly around every node in the diagram.
         """
-        minX: int = maxsize
+        minX: int = maxsize     # The biggest it can be.
         minY: int = maxsize
-        maxX: int = 0
+        maxX: int = 0           # The smallest it can be.
         maxY: int = 0
 
         for node in self._nodes:
@@ -387,7 +356,7 @@ class LayoutEngine:
                 maxY = node.y
 
         rectangle: Rectangle = Rectangle.FromLTRB(minX, minY, maxX, maxY)
-        self.logger.info(f'{rectangle=}')
+        self.logger.debug(f'{rectangle=}')
         return rectangle
 
     def _scalePoint(self, point: Point, scale: float):
@@ -406,6 +375,24 @@ class LayoutEngine:
         y: float = point.y * scale
 
         return Point(x=int(x), y=int(y))
+
+    @classmethod
+    def calculateDistance(cls, a: Point, b: Point) -> int:
+        """
+        Calculates the distance between two points.
+
+        Args:
+            a:  The first point
+            b:  The second point
+
+        Returns: The pixel distance between the two points.
+        """
+        xDistance: float = a.x - b.x
+        yDistance: float = a.y - b.y
+
+        distance: float = sqrt(pow(xDistance, 2) + pow(yDistance, 2))
+
+        return int(distance)
 
     def __eq__(self, other) -> bool:
 
