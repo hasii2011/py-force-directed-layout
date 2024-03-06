@@ -1,4 +1,4 @@
-
+from enum import Enum
 from typing import cast
 
 from logging import Logger
@@ -9,6 +9,7 @@ from random import randint
 from wx import App
 from wx import BLACK
 from wx import BLACK_BRUSH
+from wx import BLACK_PEN
 from wx import BLUE
 from wx import BLUE_BRUSH
 from wx import Brush
@@ -33,6 +34,7 @@ from wx import Pen
 from wx import ProgressDialog
 from wx import RED_BRUSH
 from wx import RED_PEN
+from wx import WHITE
 from wx import Yield as wxYield
 
 from wx.lib.sized_controls import SizedFrame
@@ -66,6 +68,16 @@ MIN_Y: int = 20
 MAX_Y: int = 600
 
 
+MAX_CHILD_COUNT: int = 5
+
+
+class DiagramType(Enum):
+    RANDOM_SPOT_NODES      = 1
+    RANDOM_RECTANGLE_NODES = 2
+    FIXED_SPOT_NODES       = 3
+    FIXED_RECTANGLE_NODES  = 4
+
+
 class DemoLayout(App):
 
     def __init__(self):
@@ -87,14 +99,21 @@ class DemoLayout(App):
         sizedPanel: SizedPanel = self._topLevelFrame.GetContentsPane()
 
         self._diagramFrame: DiagramFrame = DiagramFrame(parent=sizedPanel)
+        self._diagramType:  DiagramType  = DiagramType.FIXED_RECTANGLE_NODES
 
         # noinspection PyUnresolvedReferences
         self._diagramFrame.SetSizerProps(expand=True, proportion=1)
         self._diagramFrame.layoutEngine = LayoutEngine()
         # self._generateRandomDiagram(layoutEngine=self._diagramFrame.layoutEngine)
-        self._generateFixDiagramRectangleNodes(layoutEngine=self._diagramFrame.layoutEngine)
+        # self._generateRandomFixedDiagramRectangleNodes(layoutEngine=self._diagramFrame.layoutEngine)
+        self._generateRandomDiagramRectangleNodes(layoutEngine=self._diagramFrame.layoutEngine)
 
-        self._arrangeId = wxNewIdRef()
+        self._arrangeId:              int = wxNewIdRef()
+        self._randomSpotNodesId:      int = wxNewIdRef()
+        self._randomRectangleNodesId: int = wxNewIdRef()
+        self._fixedSpotNodesId:       int = wxNewIdRef()
+        self._fixedRectangleNodesId:  int = wxNewIdRef()
+
         self._createApplicationMenuBar()
 
         self.SetTopWindow(self._topLevelFrame)
@@ -110,8 +129,9 @@ class DemoLayout(App):
         return True
 
     def _createApplicationMenuBar(self):
-        menuBar:  MenuBar = MenuBar()
-        fileMenu: Menu    = Menu()
+        menuBar:     MenuBar = MenuBar()
+        fileMenu:    Menu    = Menu()
+        diagramMenu: Menu = Menu()
 
         fileMenu.AppendSeparator()
         fileMenu.Append(ID_PREFERENCES, "&Configuration\tCtrl-C", "Force Directed Configuration")
@@ -121,7 +141,13 @@ class DemoLayout(App):
 
         fileMenu.Append(id=self._arrangeId, item='&Arrange\tCtrl-A', helpString='Arrange the diagram')
 
+        diagramMenu.Append(id=self._randomSpotNodesId,      item='Random &Spot Nodes\tCtrl-S',      helpString='')
+        diagramMenu.Append(id=self._randomRectangleNodesId, item='Random &Rectangle Nodes\tCtrl-R', helpString='')
+        diagramMenu.Append(id=self._fixedSpotNodesId,       item='&Fixed Spot Nodes\tCtrl-F',       helpString='')
+        diagramMenu.Append(id=self._fixedRectangleNodesId,  item='Fixed Rectangle &Nodes\tCtrl-N',  helpString='')
+
         menuBar.Append(fileMenu, 'File')
+        menuBar.Append(diagramMenu, 'Diagram Type')
 
         # entryArrange1: AcceleratorEntry = AcceleratorEntry(flags=ACCEL_ALT, keyCode=ord('a'), cmd=self._arrangeId)
         # entryArrange2: AcceleratorEntry = AcceleratorEntry(flags=ACCEL_ALT, keyCode=ord('A'), cmd=self._arrangeId)
@@ -133,8 +159,12 @@ class DemoLayout(App):
 
         self._topLevelFrame.SetMenuBar(menuBar)
 
-        self._topLevelFrame.Bind(EVT_MENU, self._onArrange,       id=self._arrangeId)
-        self._topLevelFrame.Bind(EVT_MENU, self._onConfiguration, id=ID_PREFERENCES)
+        self._topLevelFrame.Bind(EVT_MENU, self._onArrange,         id=self._arrangeId)
+        self._topLevelFrame.Bind(EVT_MENU, self._onConfiguration,   id=ID_PREFERENCES)
+        self._topLevelFrame.Bind(EVT_MENU, self._changeDiagramType, id=self._randomSpotNodesId)
+        self._topLevelFrame.Bind(EVT_MENU, self._changeDiagramType, id=self._randomRectangleNodesId)
+        self._topLevelFrame.Bind(EVT_MENU, self._changeDiagramType, id=self._fixedSpotNodesId)
+        self._topLevelFrame.Bind(EVT_MENU, self._changeDiagramType, id=self._fixedRectangleNodesId)
 
     # noinspection PyUnusedLocal
     def _onArrange(self, event: CommandEvent):
@@ -163,8 +193,18 @@ class DemoLayout(App):
 
         self.logger.info(f'Old node count: {len(self._diagramFrame.layoutEngine.nodes)}')
         self._diagramFrame.layoutEngine = LayoutEngine()
-        # self._generateRandomDiagram(layoutEngine=self._diagramFrame.layoutEngine)
-        self._generateFixDiagramRectangleNodes(layoutEngine=self._diagramFrame.layoutEngine)
+        match self._diagramType:
+            case DiagramType.RANDOM_SPOT_NODES:
+                self._generateRandomDiagramSpotNodes(layoutEngine=self._diagramFrame.layoutEngine)
+            case DiagramType.RANDOM_RECTANGLE_NODES:
+                self._generateRandomDiagramRectangleNodes(layoutEngine=self._diagramFrame.layoutEngine)
+            case DiagramType.FIXED_SPOT_NODES:
+                self._generateFixedDiagramSpotNodes(layoutEngine=self._diagramFrame.layoutEngine)
+            case DiagramType.FIXED_RECTANGLE_NODES:
+                self._generateFixedDiagramRectangleNodes(layoutEngine=self._diagramFrame.layoutEngine)
+            case _:
+                self.logger.error(f'Unknown diagram type: {self._diagramType}')
+
         self.logger.info(f'New node count: {len(self._diagramFrame.layoutEngine.nodes)}')
         self._diagramFrame.Refresh()
 
@@ -185,13 +225,31 @@ class DemoLayout(App):
         self._diagramFrame.Refresh()
         wxYield()
 
-    def _generateRandomDiagram(self, layoutEngine: LayoutEngine):
+    def _changeDiagramType(self, event: CommandEvent):
+
+        diagramTypeId: int = event.GetId()
+        print(f'{diagramTypeId=}')
+        match diagramTypeId:
+            case self._randomSpotNodesId:
+                self._diagramType = DiagramType.RANDOM_SPOT_NODES
+            case self._randomRectangleNodesId:
+                self._diagramType = DiagramType.RANDOM_RECTANGLE_NODES
+            case self._fixedSpotNodesId:
+                self._diagramType = DiagramType.FIXED_SPOT_NODES
+            case self._fixedRectangleNodesId:
+                self._diagramType = DiagramType.FIXED_RECTANGLE_NODES
+            case _:
+                self.logger.error(f'Unknown diagram type')
+
+        self._onResetDiagram(None)
+
+    def _generateRandomDiagramSpotNodes(self, layoutEngine: LayoutEngine):
 
         bluePen:  Pen = Pen(colour=BLUE, width=1,  style=PENSTYLE_SOLID)
         blackPen: Pen = Pen(colour=BLACK, width=1, style=PENSTYLE_SOLID)
 
         parentNode: SpotNode = SpotNode(stroke=blackPen, fill=BLACK_BRUSH)
-        parentNode.location  = Point(x=randint(1, 600), y=randint(1, 500))
+        parentNode.location  = Point(x=randint(1, MAX_X), y=randint(1, MAX_Y))
 
         layoutEngine.addNode(parentNode)
 
@@ -216,42 +274,47 @@ class DemoLayout(App):
                     grandChildNode.addChild(greatGrandChildNode)
                     layoutEngine.addNode(grandChildNode)
 
-    def _generateFixedDiagram(self, layoutEngine: LayoutEngine):
+    def _generateRandomDiagramRectangleNodes(self, layoutEngine: LayoutEngine):
 
-        blackPen: Pen = Pen(colour=BLACK, width=1, style=PENSTYLE_SOLID)
+        fillColor: Colour = DemoColorEnum.toWxColor(DemoColorEnum.LIGHT_YELLOW)
+        brush:     Brush  = Brush(colour=fillColor)
 
-        parentNode: SpotNode = SpotNode(stroke=blackPen, fill=BLACK_BRUSH)
-        parentNode.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-        parentNode = self._generateParentHierarchy(parentNode=parentNode, layoutEngine=layoutEngine)
+        parentNode: RectangleNode = RectangleNode(name='The Parent', fill=brush)
+        parentNode.location  = Point(x=randint(1, MAX_X), y=randint(1, MAX_Y))
+
         layoutEngine.addNode(parentNode)
 
-        parentNode2: SpotNode = SpotNode(stroke=blackPen, fill=BLACK_BRUSH)
-        parentNode2.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-        parentNode2 = self._generateParentHierarchy(parentNode=parentNode2, layoutEngine=layoutEngine)
-        layoutEngine.addNode(parentNode2)
+        childPen:             Pen   = Pen(colour=DemoColorEnum.toWxColor(DemoColorEnum.LIGHT_STEEL_BLUE), width=1,  style=PENSTYLE_SOLID)
+        childBrush:           Brush = Brush(colour=DemoColorEnum.toWxColor(DemoColorEnum.LIGHT_GREY))
+        grandChildBrush:      Brush = Brush(colour=DemoColorEnum.toWxColor(DemoColorEnum.ALICE_BLUE))
+        greatGrandChildBrush: Brush = Brush(colour=DemoColorEnum.toWxColor(DemoColorEnum.LIGHT_BLUE))
 
-    def _generateParentHierarchy(self, layoutEngine: LayoutEngine, parentNode: SpotNode) -> SpotNode:
+        childrenCount: int = randint(1, MAX_CHILD_COUNT)
 
-        bluePen:  Pen = Pen(colour=BLUE, width=1,  style=PENSTYLE_SOLID)
-        childNode1: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
-        childNode2: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
-        childNode3: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
+        for x in range(childrenCount):
+            name: str = f'Child{x}'
+            childNode: RectangleNode = RectangleNode(name=name, stroke=childPen, fill=childBrush, textColor=WHITE)
+            childNode.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+            parentNode.addChild(childNode)
+            layoutEngine.addNode(childNode)
 
-        childNode1.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-        childNode2.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
-        childNode3.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+            grandChildrenCount: int = randint(0, MAX_CHILD_COUNT)
+            for y in range(grandChildrenCount):
+                grandChildName: str = f'GrandChild{y}'
+                grandChildNode: RectangleNode = RectangleNode(name=grandChildName, stroke=BLACK_PEN, fill=grandChildBrush)
+                grandChildNode.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+                childNode.addChild(grandChildNode)
+                layoutEngine.addNode(grandChildNode)
 
-        layoutEngine.addNode(childNode1)
-        layoutEngine.addNode(childNode2)
-        layoutEngine.addNode(childNode3)
+                greatGrandChildrenCount: int = randint(0, MAX_CHILD_COUNT)
+                for z in range(greatGrandChildrenCount):
+                    greatGrandChildName: str = f'GreatGrandChild{z}'
+                    greatGrandChildNode: RectangleNode = RectangleNode(name=greatGrandChildName, stroke=RED_PEN, fill=greatGrandChildBrush)
+                    greatGrandChildNode.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+                    grandChildNode.addChild(greatGrandChildNode)
+                    layoutEngine.addNode(grandChildNode)
 
-        parentNode.addChild(childNode1)
-        parentNode.addChild(childNode2)
-        parentNode.addChild(childNode3)
-
-        return parentNode
-
-    def _generateFixDiagramRectangleNodes(self, layoutEngine: LayoutEngine):
+    def _generateFixedDiagramRectangleNodes(self, layoutEngine: LayoutEngine):
 
         fillColor: Colour = DemoColorEnum.toWxColor(DemoColorEnum.LIGHT_YELLOW)
         brush:     Brush  = Brush(colour=fillColor)
@@ -274,6 +337,41 @@ class DemoLayout(App):
         childNode1: RectangleNode = RectangleNode(name='ChildNode1', stroke=bluePen, fill=brush)
         childNode2: RectangleNode = RectangleNode(name='ChildNode2', stroke=bluePen, fill=brush)
         childNode3: RectangleNode = RectangleNode(name='ChildNode2', stroke=bluePen, fill=brush)
+
+        childNode1.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+        childNode2.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+        childNode3.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+
+        layoutEngine.addNode(childNode1)
+        layoutEngine.addNode(childNode2)
+        layoutEngine.addNode(childNode3)
+
+        parentNode.addChild(childNode1)
+        parentNode.addChild(childNode2)
+        parentNode.addChild(childNode3)
+
+        return parentNode
+
+    def _generateFixedDiagramSpotNodes(self, layoutEngine: LayoutEngine):
+
+        blackPen: Pen = Pen(colour=BLACK, width=1, style=PENSTYLE_SOLID)
+
+        parentNode: SpotNode = SpotNode(stroke=blackPen, fill=BLACK_BRUSH)
+        parentNode.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+        parentNode = self._generateParentHierarchy(parentNode=parentNode, layoutEngine=layoutEngine)
+        layoutEngine.addNode(parentNode)
+
+        parentNode2: SpotNode = SpotNode(stroke=blackPen, fill=BLACK_BRUSH)
+        parentNode2.location  = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
+        parentNode2 = self._generateParentHierarchy(parentNode=parentNode2, layoutEngine=layoutEngine)
+        layoutEngine.addNode(parentNode2)
+
+    def _generateParentHierarchy(self, layoutEngine: LayoutEngine, parentNode: SpotNode) -> SpotNode:
+
+        bluePen:  Pen = Pen(colour=BLUE, width=1,  style=PENSTYLE_SOLID)
+        childNode1: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
+        childNode2: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
+        childNode3: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
 
         childNode1.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))
         childNode2.location = Point(x=randint(MIN_X, MAX_X), y=randint(MIN_Y, MAX_Y))

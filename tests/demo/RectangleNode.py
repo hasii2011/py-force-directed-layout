@@ -28,7 +28,7 @@ DEFAULT_FONT_SIZE = 10
 
 class RectangleNode(Node):
 
-    def __init__(self, name: str, stroke: Pen = DEFAULT_PEN, fill: Brush = DEFAULT_BRUSH):
+    def __init__(self, name: str, stroke: Pen = DEFAULT_PEN, fill: Brush = DEFAULT_BRUSH, textColor: Colour = BLACK):
         super().__init__()
 
         self.logger: Logger = getLogger(__name__)
@@ -37,7 +37,7 @@ class RectangleNode(Node):
         self._stroke: Pen   = stroke
         self._fill:   Brush = fill
 
-        self._textColor:   Colour = BLACK
+        self._textColor:   Colour = textColor
         self._defaultFont: Font   = Font(DEFAULT_FONT_SIZE, FONTFAMILY_SWISS, FONTSTYLE_NORMAL, FONTWEIGHT_NORMAL)
         self._nameFont:    Font   = Font(DEFAULT_FONT_SIZE, FONTFAMILY_SWISS, FONTSTYLE_NORMAL, FONTWEIGHT_BOLD)
 
