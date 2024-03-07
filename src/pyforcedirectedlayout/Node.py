@@ -15,7 +15,7 @@ from pyforcedirectedlayout.Point import Point
 from pyforcedirectedlayout.Size import Size
 
 if TYPE_CHECKING:
-    from pyforcedirectedlayout.LayoutEngine import LayoutEngine
+    from pyforcedirectedlayout.ForceDirectedLayout import ForceDirectedLayout
 
 from pyforcedirectedlayout.LayoutTypes import Nodes
 
@@ -29,7 +29,7 @@ class Node(ABC):
 
         self.nodeLogger: Logger = getLogger(__name__)
 
-        self._layoutEngine: 'LayoutEngine' = cast('LayoutEngine', None)
+        self._layoutEngine: 'ForceDirectedLayout' = cast('ForceDirectedLayout', None)
         self._connections:  Nodes     = Nodes([])
         self._location:     Point     = Point()
 
@@ -89,11 +89,11 @@ class Node(ABC):
         self._location.y = y
 
     @property
-    def layoutEngine(self) -> 'LayoutEngine':
+    def layoutEngine(self) -> 'ForceDirectedLayout':
         return self._layoutEngine
 
     @layoutEngine.setter
-    def layoutEngine(self, layoutEngine: 'LayoutEngine'):
+    def layoutEngine(self, layoutEngine: 'ForceDirectedLayout'):
 
         if layoutEngine == self._layoutEngine:
             pass

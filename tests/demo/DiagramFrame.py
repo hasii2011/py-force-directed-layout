@@ -24,7 +24,7 @@ from wx import Window
 # noinspection PyUnresolvedReferences
 from wx.core import PenStyle
 
-from pyforcedirectedlayout.LayoutEngine import LayoutEngine
+from pyforcedirectedlayout.ForceDirectedLayout import ForceDirectedLayout
 from pyforcedirectedlayout.LayoutTypes import Nodes
 from pyforcedirectedlayout.Node import Node
 from pyforcedirectedlayout.Point import Point
@@ -35,7 +35,7 @@ A4_FACTOR:    float = 1.41
 PIXELS_PER_UNIT_X: int = 20
 PIXELS_PER_UNIT_Y: int = 20
 
-NO_LAYOUT_ENGINE: LayoutEngine = cast(LayoutEngine, None)
+NO_LAYOUT_ENGINE: ForceDirectedLayout = cast(ForceDirectedLayout, None)
 
 
 class DiagramFrame(ScrolledWindow):
@@ -46,7 +46,7 @@ class DiagramFrame(ScrolledWindow):
 
         self.logger: Logger = getLogger(__name__)
 
-        self._layoutEngine: LayoutEngine = NO_LAYOUT_ENGINE
+        self._layoutEngine: ForceDirectedLayout = NO_LAYOUT_ENGINE
 
         self.maxWidth:  int  = DEFAULT_WIDTH
         self.maxHeight: int = int(self.maxWidth / A4_FACTOR)  # 1.41 is for A4 support
@@ -71,14 +71,14 @@ class DiagramFrame(ScrolledWindow):
         self.onPaint(cast(PaintEvent, None))
 
     @property
-    def layoutEngine(self) -> LayoutEngine:
+    def layoutEngine(self) -> ForceDirectedLayout:
         """
         Returns:  The diagram associated with this frame
         """
         return self._layoutEngine
 
     @layoutEngine.setter
-    def layoutEngine(self, layoutEngine: LayoutEngine):
+    def layoutEngine(self, layoutEngine: ForceDirectedLayout):
         """
         Associates a new layout engine with the frame
         Args:

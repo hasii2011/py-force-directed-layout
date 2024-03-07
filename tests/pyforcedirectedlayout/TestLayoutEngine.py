@@ -9,8 +9,8 @@ from unittest import main as unitTestMain
 from codeallybasic.UnitTestBase import UnitTestBase
 
 from pyforcedirectedlayout.Configuration import Configuration
-from pyforcedirectedlayout.LayoutEngine import LayoutEngine
-from pyforcedirectedlayout.LayoutEngine import ORIGIN_POINT
+from pyforcedirectedlayout.ForceDirectedLayout import ForceDirectedLayout
+from pyforcedirectedlayout.ForceDirectedLayout import ORIGIN_POINT
 from pyforcedirectedlayout.Node import Node
 from pyforcedirectedlayout.NodeLayoutInformation import NodeLayoutInformation
 
@@ -48,33 +48,33 @@ class TestLayoutEngine(UnitTestBase):
         super().tearDown()
 
     def testLayoutEngineSame(self):
-        layoutEngine: LayoutEngine = LayoutEngine()
-        doppleGanger: LayoutEngine = layoutEngine
+        layoutEngine: ForceDirectedLayout = ForceDirectedLayout()
+        doppleGanger: ForceDirectedLayout = layoutEngine
 
         self.assertEqual(layoutEngine, doppleGanger, 'The should be the same')
 
     def testLayoutEngineNotTheSame(self):
-        layoutEngineA: LayoutEngine = LayoutEngine()
-        layoutEngineB: LayoutEngine = LayoutEngine()
+        layoutEngineA: ForceDirectedLayout = ForceDirectedLayout()
+        layoutEngineB: ForceDirectedLayout = ForceDirectedLayout()
 
         self.assertNotEqual(layoutEngineA, layoutEngineB, 'These are not the same')
 
     def testCalculateDistancePositive(self):
 
         metaLocation  = Point(50, 50)
-        magnitude: int = LayoutEngine.calculateDistance(a=ORIGIN_POINT, b=metaLocation)
+        magnitude: int = ForceDirectedLayout.calculateDistance(a=ORIGIN_POINT, b=metaLocation)
 
         self.assertEqual(70, magnitude, 'Magnitude is incorrect')
 
     def testCalculateDistanceNegative(self):
 
         metaLocation  = Point(-50, -50)
-        magnitude: int = LayoutEngine.calculateDistance(a=ORIGIN_POINT, b=metaLocation)
+        magnitude: int = ForceDirectedLayout.calculateDistance(a=ORIGIN_POINT, b=metaLocation)
 
         self.assertEqual(70, magnitude, 'Magnitude is incorrect')
 
     def testBearingAngleDown(self):
-        layoutEngine: LayoutEngine = LayoutEngine()
+        layoutEngine: ForceDirectedLayout = ForceDirectedLayout()
 
         endPoint:   Point = Point(x=100, y=100)
         startPoint: Point = Point(x=100, y=300)
@@ -85,7 +85,7 @@ class TestLayoutEngine(UnitTestBase):
         self.assertAlmostEqual(expectedAngle, angle, places=2, msg='Angle not close enough')
 
     def testBearingAngleUp(self):
-        layoutEngine: LayoutEngine = LayoutEngine()
+        layoutEngine: ForceDirectedLayout = ForceDirectedLayout()
 
         startPoint: Point = Point(x=100, y=100)
         endPoint:   Point = Point(x=100, y=300)
@@ -97,7 +97,7 @@ class TestLayoutEngine(UnitTestBase):
 
     def testCalculateAttractionForce(self):
 
-        layoutEngine: LayoutEngine = LayoutEngine()
+        layoutEngine: ForceDirectedLayout = ForceDirectedLayout()
 
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
 
@@ -108,7 +108,7 @@ class TestLayoutEngine(UnitTestBase):
 
     def testCalculateAttractionForceInverse(self):
 
-        layoutEngine: LayoutEngine = LayoutEngine()
+        layoutEngine: ForceDirectedLayout = ForceDirectedLayout()
 
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
 
@@ -122,7 +122,7 @@ class TestLayoutEngine(UnitTestBase):
         saveRepulsionForce: float = self._configuration.repulsionForce
 
         self._configuration.repulsionForce = 10000
-        layoutEngine: LayoutEngine = LayoutEngine()
+        layoutEngine: ForceDirectedLayout = ForceDirectedLayout()
 
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
 
@@ -138,7 +138,7 @@ class TestLayoutEngine(UnitTestBase):
         saveRepulsionForce: float = self._configuration.repulsionForce
 
         self._configuration.repulsionForce = 10000
-        layoutEngine: LayoutEngine = LayoutEngine()
+        layoutEngine: ForceDirectedLayout = ForceDirectedLayout()
 
         actingOnNode, creatingForceNode = self._createTwoFakeNodes()
 
@@ -151,7 +151,7 @@ class TestLayoutEngine(UnitTestBase):
 
     def testRemoveNode(self):
 
-        layoutEngine: LayoutEngine = LayoutEngine()
+        layoutEngine: ForceDirectedLayout = ForceDirectedLayout()
 
         inDiagramNode:    FakeNode = FakeNode(location=Point(x=100, y=100), fakeId=100)
         notInDiagramNode: FakeNode = FakeNode(location=Point(x=666, y=666), fakeId=666)
@@ -164,7 +164,7 @@ class TestLayoutEngine(UnitTestBase):
 
     def testScalePoint(self):
 
-        layoutEngine: LayoutEngine = LayoutEngine()
+        layoutEngine: ForceDirectedLayout = ForceDirectedLayout()
 
         pointToScale: Point = Point(x=100, y=100)
 
@@ -175,7 +175,7 @@ class TestLayoutEngine(UnitTestBase):
 
     def testDetermineRepulsionBetweenNodes(self):
 
-        layoutEngine: LayoutEngine = self._createDiagramWithFakeNodes(3)
+        layoutEngine: ForceDirectedLayout = self._createDiagramWithFakeNodes(3)
 
         layoutList: NodeLayoutInformationList = self._createFixedMetaNodes(layoutEngine)
 
@@ -191,7 +191,7 @@ class TestLayoutEngine(UnitTestBase):
 
     def testRandomizeInitialNodeCoordinates(self):
 
-        layoutEngine: LayoutEngine = self._createDiagramWithFakeNodes(NUMBER_OF_NODES_TO_GENERATE)
+        layoutEngine: ForceDirectedLayout = self._createDiagramWithFakeNodes(NUMBER_OF_NODES_TO_GENERATE)
 
         layout: NodeLayoutInformationList = layoutEngine._randomizeInitialNodeCoordinates()
 
@@ -204,7 +204,7 @@ class TestLayoutEngine(UnitTestBase):
 
     def testCalculateDistance(self):
 
-        distance: int = LayoutEngine.calculateDistance(a=Point(100, 100), b=Point(100, 200))
+        distance: int = ForceDirectedLayout.calculateDistance(a=Point(100, 100), b=Point(100, 200))
 
         self.assertEqual(100, distance, 'Incorrect distance')
 
@@ -215,9 +215,9 @@ class TestLayoutEngine(UnitTestBase):
 
         return TwoFakeNodes((actingOnNode, creatingForceNode))
 
-    def _createDiagramWithFakeNodes(self, numberToGenerate: int) -> LayoutEngine:
+    def _createDiagramWithFakeNodes(self, numberToGenerate: int) -> ForceDirectedLayout:
 
-        layoutEngine: LayoutEngine = LayoutEngine()
+        layoutEngine: ForceDirectedLayout = ForceDirectedLayout()
 
         parentNode: Node = FakeNode(location=Point(), fakeId=1)
         layoutEngine.addNode(parentNode)
@@ -228,7 +228,7 @@ class TestLayoutEngine(UnitTestBase):
 
         return layoutEngine
 
-    def _createFixedMetaNodes(self, layoutEngine: LayoutEngine) -> NodeLayoutInformationList:
+    def _createFixedMetaNodes(self, layoutEngine: ForceDirectedLayout) -> NodeLayoutInformationList:
         points: List[Point] = [
             Point(25, 25), Point(-25, -25), Point(0, 0)
         ]

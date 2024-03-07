@@ -30,7 +30,7 @@ from pyforcedirectedlayout.NodeLayoutInformation import NodeLayoutInformationLis
 ORIGIN_POINT: Point = Point(0, 0)
 
 
-class LayoutEngine:
+class ForceDirectedLayout:
     """
     Represents a simple diagram consisting of nodes and connections, implementing a
     force-directed algorithm for automatically arranging the nodes.
@@ -107,7 +107,7 @@ class LayoutEngine:
 
         Returns:  True if the node belonged to the diagram.
         """
-        node.layoutEngine = cast(LayoutEngine, None)
+        node.layoutEngine = cast(ForceDirectedLayout, None)
 
         for otherNode in self._nodes:
             if otherNode != node and node in otherNode.connections:
@@ -152,7 +152,7 @@ class LayoutEngine:
                 #
                 # express the node's current position as a vector, relative to the origin
                 #
-                magnitude:       int    = LayoutEngine.calculateDistance(a=ORIGIN_POINT, b=metaNode.location)
+                magnitude:       int    = ForceDirectedLayout.calculateDistance(a=ORIGIN_POINT, b=metaNode.location)
                 direction:       float  = self._getBearingAngle(start=ORIGIN_POINT, end=metaNode.location)
                 currentPosition: Vector = Vector(magnitude=magnitude, direction=direction)
 
@@ -169,7 +169,7 @@ class LayoutEngine:
             # move nodes to resultant positions (and calculate total displacement)
             for currentMeta in layoutList:
                 metaNode = currentMeta.node
-                totalDisplacement += LayoutEngine.calculateDistance(a=metaNode.location, b=currentMeta.nextPosition)
+                totalDisplacement += ForceDirectedLayout.calculateDistance(a=metaNode.location, b=currentMeta.nextPosition)
                 metaNode.location = currentMeta.nextPosition
 
             iterations += 1
@@ -274,7 +274,7 @@ class LayoutEngine:
 
         Returns:  A Vector representing the attraction force.
         """
-        proximity: int = max(LayoutEngine.calculateDistance(x.location, y.location), 1)
+        proximity: int = max(ForceDirectedLayout.calculateDistance(x.location, y.location), 1)
         # Hooke's Law: F = -kx
         attraction: float = self._configuration.attractionForce
         force: float = attraction * max(proximity - springLength, 0)
@@ -295,7 +295,7 @@ class LayoutEngine:
 
         Returns:    A Vector representing the repulsion force.
         """
-        proximity: int = max(LayoutEngine.calculateDistance(x.location, y.location), 1)
+        proximity: int = max(ForceDirectedLayout.calculateDistance(x.location, y.location), 1)
         #  Coulomb's Law: F = k(Qq/r^2)
         coulombLawConstant: int = self._configuration.repulsionForce
 
@@ -398,7 +398,7 @@ class LayoutEngine:
 
     def __eq__(self, other) -> bool:
 
-        if isinstance(other, LayoutEngine) is False:
+        if isinstance(other, ForceDirectedLayout) is False:
             return False
 
         return self.id == other.id

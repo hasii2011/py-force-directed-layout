@@ -26,7 +26,7 @@ from wx.lib.sized_controls import SizedPanel
 
 from codeallybasic.UnitTestBase import UnitTestBase
 
-from pyforcedirectedlayout.LayoutEngine import LayoutEngine
+from pyforcedirectedlayout.ForceDirectedLayout import ForceDirectedLayout
 from pyforcedirectedlayout.LayoutTypes import LayoutStatus
 
 from tests.demo.DemoTypes import EVT_FORCED_DIRECTED_LAYOUT
@@ -76,7 +76,7 @@ class DemoLayout(App):
 
         # noinspection PyUnresolvedReferences
         self._diagramFrame.SetSizerProps(expand=True, proportion=1)
-        self._diagramFrame.layoutEngine = LayoutEngine()
+        self._diagramFrame.layoutEngine = ForceDirectedLayout()
 
         self._diagramGenerator: DiagramGenerator = DiagramGenerator()
 
@@ -167,7 +167,7 @@ class DemoLayout(App):
     def _onResetDiagram(self, event: ResetDiagramEvent):
 
         self.logger.info(f'Old node count: {len(self._diagramFrame.layoutEngine.nodes)}')
-        self._diagramFrame.layoutEngine = LayoutEngine()
+        self._diagramFrame.layoutEngine = ForceDirectedLayout()
         match self._diagramType:
             case DiagramType.RANDOM_SPOT_NODES:
                 self._diagramGenerator.generateRandomDiagramSpotNodes(layoutEngine=self._diagramFrame.layoutEngine)

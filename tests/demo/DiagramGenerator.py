@@ -18,7 +18,7 @@ from wx import RED_BRUSH
 from wx import RED_PEN
 from wx import WHITE
 
-from pyforcedirectedlayout.LayoutEngine import LayoutEngine
+from pyforcedirectedlayout.ForceDirectedLayout import ForceDirectedLayout
 from pyforcedirectedlayout.Point import Point
 
 from tests.demo.DemoColorEnum import DemoColorEnum
@@ -39,7 +39,7 @@ class DiagramGenerator:
     def __init__(self):
         self.logger: Logger = getLogger(__name__)
 
-    def generateRandomDiagramSpotNodes(self, layoutEngine: LayoutEngine):
+    def generateRandomDiagramSpotNodes(self, layoutEngine: ForceDirectedLayout):
 
         bluePen:  Pen = Pen(colour=BLUE, width=1,  style=PENSTYLE_SOLID)
         blackPen: Pen = Pen(colour=BLACK, width=1, style=PENSTYLE_SOLID)
@@ -71,7 +71,7 @@ class DiagramGenerator:
                     grandChildNode.addChild(greatGrandChildNode)
                     layoutEngine.addNode(grandChildNode)
 
-    def generateRandomDiagramRectangleNodes(self, layoutEngine: LayoutEngine):
+    def generateRandomDiagramRectangleNodes(self, layoutEngine: ForceDirectedLayout):
 
         fillColor: Colour = DemoColorEnum.toWxColor(DemoColorEnum.LIGHT_YELLOW)
         brush:     Brush  = Brush(colour=fillColor)
@@ -111,7 +111,7 @@ class DiagramGenerator:
                     grandChildNode.addChild(greatGrandChildNode)
                     layoutEngine.addNode(grandChildNode)
 
-    def generateFixedDiagramRectangleNodes(self, layoutEngine: LayoutEngine):
+    def generateFixedDiagramRectangleNodes(self, layoutEngine: ForceDirectedLayout):
 
         fillColor: Colour = DemoColorEnum.toWxColor(DemoColorEnum.LIGHT_YELLOW)
         brush:     Brush  = Brush(colour=fillColor)
@@ -126,7 +126,7 @@ class DiagramGenerator:
         parentNode2 = self._generateRectangleHierarchy(parentNode=parentNode2, layoutEngine=layoutEngine)
         layoutEngine.addNode(parentNode2)
 
-    def generateFixedDiagramSpotNodes(self, layoutEngine: LayoutEngine):
+    def generateFixedDiagramSpotNodes(self, layoutEngine: ForceDirectedLayout):
 
         blackPen: Pen = Pen(colour=BLACK, width=1, style=PENSTYLE_SOLID)
 
@@ -140,7 +140,7 @@ class DiagramGenerator:
         parentNode2 = self._generateSpotHierarchy(parentNode=parentNode2, layoutEngine=layoutEngine)
         layoutEngine.addNode(parentNode2)
 
-    def _generateRectangleHierarchy(self, layoutEngine: LayoutEngine, parentNode: RectangleNode) -> RectangleNode:
+    def _generateRectangleHierarchy(self, layoutEngine: ForceDirectedLayout, parentNode: RectangleNode) -> RectangleNode:
 
         bluePen: Pen   = Pen(colour=BLUE, width=1,  style=PENSTYLE_SOLID)
         brush:   Brush = Brush(colour=DemoColorEnum.toWxColor(DemoColorEnum.LIGHT_STEEL_BLUE))
@@ -163,7 +163,7 @@ class DiagramGenerator:
 
         return parentNode
 
-    def _generateSpotHierarchy(self, layoutEngine: LayoutEngine, parentNode: SpotNode) -> SpotNode:
+    def _generateSpotHierarchy(self, layoutEngine: ForceDirectedLayout, parentNode: SpotNode) -> SpotNode:
 
         bluePen:  Pen = Pen(colour=BLUE, width=1,  style=PENSTYLE_SOLID)
         childNode1: SpotNode = SpotNode(stroke=bluePen, fill=BLUE_BRUSH)
