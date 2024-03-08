@@ -39,8 +39,11 @@ from wx.lib.sized_controls import SizedDialog
 from wx.lib.sized_controls import SizedPanel
 from wx.lib.sized_controls import SizedStaticBox
 
+from codeallybasic.MinMax import MinMax
+
 from codeallyadvanced.ui.widgets.DialSelector import DialSelectorParameters
 from codeallyadvanced.ui.widgets.DialSelector import DialSelector
+from codeallyadvanced.ui.widgets.MinMaxControl import MinMaxControl
 
 from pyforcedirectedlayout.Configuration import Configuration
 
@@ -51,8 +54,6 @@ from pyforcedirectedlayout.Configuration import Y_RANGE_MIN
 
 from tests.demo.DemoTypes import ForceDirectedLayoutEvent
 from tests.demo.DemoTypes import ResetDiagramEvent
-from tests.demo.MinMaxControl import MinMax
-from tests.demo.MinMaxControl import MinMaxControl
 
 NO_DIAL_SELECTOR: DialSelector = cast(DialSelector, None)
 NO_BUTTON:        Button       = cast(Button, None)

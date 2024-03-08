@@ -13,7 +13,7 @@ maintainers = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@g
 keywords = ['layout', 'diagram', 'python',]
 
 dependencies = [
-    'codeallybasic>=1.2.0',
+    'codeallybasic>=1.3.0',
 ]
 
 [project.urls]

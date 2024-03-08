@@ -1,4 +1,5 @@
 
+from codeallybasic.MinMax import MinMax
 from codeallybasic.SingletonV3 import SingletonV3
 
 from codeallybasic.ConfigurationProperties import ConfigurationNameValue
@@ -10,7 +11,6 @@ from codeallybasic.ConfigurationProperties import Sections
 from codeallybasic.ConfigurationProperties import configurationGetter
 from codeallybasic.ConfigurationProperties import configurationSetter
 
-from tests.demo.MinMaxControl import MinMax
 
 X_RANGE_MIN: int = -1024
 X_RANGE_MAX: int = 1024
