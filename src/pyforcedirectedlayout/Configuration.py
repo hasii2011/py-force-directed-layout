@@ -70,6 +70,8 @@ class Configuration(ConfigurationProperties, metaclass=SingletonV3):
     def __init__(self):
         super().__init__(baseFileName='pyfdl.ini', moduleName='pydfl', sections=PYFDL_SECTIONS)
 
+        self._loadConfiguration()
+
     @property
     @configurationGetter(sectionName=ARRANGE_SECTION_NAME, deserializeFunction=float)
     def damping(self) -> float:

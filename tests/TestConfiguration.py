@@ -1,11 +1,10 @@
 from unittest import TestSuite
 from unittest import main as unitTestMain
 
+from codeallybasic.MinMax import MinMax
 from codeallybasic.UnitTestBase import UnitTestBase
 
 from pyforcedirectedlayout.Configuration import Configuration
-
-from tests.demo.MinMaxControl import MinMax
 
 
 class TestConfiguration(UnitTestBase):
