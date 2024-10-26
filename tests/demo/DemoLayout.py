@@ -1,8 +1,10 @@
-from enum import Enum
+
 from typing import cast
 
 from logging import Logger
 from logging import getLogger
+
+from enum import Enum
 
 from wx import App
 from wx import CommandEvent
@@ -14,12 +16,13 @@ from wx import ID_PREFERENCES
 from wx import Menu
 from wx import MenuBar
 
-from wx import NewIdRef as wxNewIdRef
 from wx import OK
 from wx import PD_APP_MODAL
 from wx import PD_ELAPSED_TIME
 from wx import ProgressDialog
+
 from wx import Yield as wxYield
+from wx import NewIdRef as wxNewIdRef
 
 from wx.lib.sized_controls import SizedFrame
 from wx.lib.sized_controls import SizedPanel

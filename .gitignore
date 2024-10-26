@@ -5,6 +5,7 @@ __pycache__/
 build/
 dist/
 /pyenv-3.11.5/
+/pyenv-3.12.4/
 /site/
 /docs/
 /.mypy_cache
