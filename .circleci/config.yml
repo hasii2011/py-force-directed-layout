@@ -35,7 +35,7 @@ jobs:
             pip install six==1.16.0
             pip install html-testRunner~=1.2.1
             pip install attrdict3
-            pip install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-22.04  wxPython
+            pip install -v -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-22.04  wxPython
             pip install codeallybasic>=1.7.0
       - save_cache:
           key: pydeps-v01__{{ checksum "requirements.txt" }}
