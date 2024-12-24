@@ -149,7 +149,7 @@ class DemoLayout(App):
         self._diagramFrame.layoutEngine.arrange(statusCallback=self._layoutStatusCallBack)
         self._diagramFrame.Refresh()
 
-        self._layoutProgressDialog.Destroy()
+        self._layoutProgressDialog.Hide()
 
     # noinspection PyUnusedLocal
     def _onExternalArrange(self, event: ForceDirectedLayoutEvent):
@@ -198,8 +198,8 @@ class DemoLayout(App):
             f'stopCount: {status.stopCount}\n'
         )
         # self.logger.info(f'{statusMsg}')
+        #
         self._layoutProgressDialog.Update(status.iterations, statusMsg)
-
         self._diagramFrame.Refresh()
         wxYield()
 
