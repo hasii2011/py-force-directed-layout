@@ -6,10 +6,10 @@ build==1.2.2.post1
 html-testRunner~=1.2.1
 mypy==1.14.0
 
-buildlackey==1.7.0
+buildlackey==2.0.0
 
-codeallybasic==1.8.0
+codeallybasic==1.30.0
 
 # Manually install this in order to run demo
-# codeallyadvanced==1.3.2
-# wxPython~=4.2.2
+# codeallyadvanced==2.3.0
+# wxPython~=4.2.4
