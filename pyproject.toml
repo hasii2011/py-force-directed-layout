@@ -7,7 +7,7 @@ name='pyforcedirectedlayout'
 dynamic = ["version"]
 description = 'Python Implementation of a Force Directed Layout Algorithm'
 readme = "README.md"
-license = {text = 'GNU AFFERO GENERAL PUBLIC LICENSE'}
+license = 'AGPL-1.0-or-later'
 authors = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@gmail.com'}]
 maintainers = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@gmail.com'}]
 keywords = ['layout', 'diagram', 'python',]
