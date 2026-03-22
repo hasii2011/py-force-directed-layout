@@ -8,7 +8,7 @@ notifications:
 
 language: python
 
-dist: jammy
+dist: noble
 
 cache: pip
 

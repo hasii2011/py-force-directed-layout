@@ -13,7 +13,24 @@ maintainers = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@g
 keywords = ['layout', 'diagram', 'python',]
 
 dependencies = [
-    'codeallybasic>=1.8.0',
+    'codeallybasic>=1.30.0',
+]
+
+[project.optional-dependencies]
+test = [
+    'mypy==1.19.1',
+    'html-testRunner~=1.2.1',
+]
+
+deploy = [
+    'wheel==0.46.3',
+    'setuptools==82.0.1',
+    'twine==6.2.0',
+    'build==1.2.2.post1',
+]
+
+demo = [
+    'wxPython==4.2.4',
 ]
 
 [project.urls]
