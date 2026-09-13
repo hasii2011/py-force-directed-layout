@@ -30,7 +30,7 @@ deploy = [
 ]
 
 demo = [
-    'wxPython==4.2.4',
+    'wxPython>=4.3.1',
 ]
 
 [project.urls]
