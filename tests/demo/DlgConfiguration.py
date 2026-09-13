@@ -55,6 +55,14 @@ from pyforcedirectedlayout.Configuration import Y_RANGE_MIN
 from tests.demo.DemoTypes import ForceDirectedLayoutEvent
 from tests.demo.DemoTypes import ResetDiagramEvent
 
+
+NODE_ATTRACTION_FORCE_MIN:       float = 0.001
+NODE_ATTRACTION_FORCE_MAX:       float = 1.0
+NODE_ATTRACTION_FORCE_INCREMENT: float = 0.05
+
+REPULSION_FORCE_MIN: int = 500
+REPULSION_FORCE_MAX: int = 25000
+
 NO_DIAL_SELECTOR: DialSelector = cast(DialSelector, None)
 NO_BUTTON:        Button       = cast(Button, None)
 
@@ -204,21 +212,27 @@ class DlgConfiguration(SizedDialog):
         attractionPanel.SetSizerType('vertical')
         attractionPanel.SetSizerProps(proportion=0)
 
-        attractionForce: FloatSpin = FloatSpin(attractionPanel, min_val=0.1, max_val=1.0, increment=0.1, value=0.1,
-                                               pos=(-1, -1), size=(75, 50), agwStyle=FS_LEFT)
+        attractionForce: FloatSpin = FloatSpin(attractionPanel,
+                                               min_val=NODE_ATTRACTION_FORCE_MIN,
+                                               max_val=NODE_ATTRACTION_FORCE_MAX,
+                                               increment=NODE_ATTRACTION_FORCE_INCREMENT,
+                                               value=self._configuration.attractionForce,
+                                               pos=(-1, -1),
+                                               size=(75, 50),
+                                               agwStyle=FS_LEFT)
         attractionForce.SetSizerProps(expand=True)
         # noinspection PyArgumentList
         attractionForce.SetDigits(2)
         # noinspection PyArgumentList
-        attractionForce.SetValue(self._configuration.attractionForce)
+        # attractionForce.SetValue(self._configuration.attractionForce)
         attractionForce.Bind(EVT_FLOATSPIN, self._attractionForceChanged)
 
         repulsionPanel: SizedStaticBox = SizedStaticBox(algorithmFactorsPanel, label='Node Repulsion Force')
         repulsionPanel.SetSizerType('vertical')
         repulsionPanel.SetSizerProps(proportion=0)
 
-        repulsionForce: SpinCtrl = SpinCtrl(repulsionPanel, size=(75, 35), pos=DefaultPosition, style=SP_VERTICAL)
-        repulsionForce.SetRange(500, 15000)
+        repulsionForce: SpinCtrl = SpinCtrl(repulsionPanel, size=Size(75, 35), pos=DefaultPosition, style=SP_VERTICAL)
+        repulsionForce.SetRange(REPULSION_FORCE_MIN, REPULSION_FORCE_MAX)
         repulsionForce.SetValue(self._configuration.repulsionForce)
         repulsionForce.SetIncrement(100)
         repulsionForce.Bind(EVT_SPINCTRL, self._repulsionForceChanged)
@@ -226,27 +240,27 @@ class DlgConfiguration(SizedDialog):
         # repulsionFactor.SetSizerProps(expand=True)
 
     # noinspection PyUnusedLocal
-    def _onOk(self, event: CommandEvent):
+    def _onOk(self, _event: CommandEvent):
         """
         """
         self.EndModal(OK)
 
     # noinspection PyUnusedLocal
-    def _onClose(self, event: CommandEvent):
+    def _onClose(self, _event: CommandEvent):
         """
         """
         self.EndModal(CANCEL)
 
     # noinspection PyUnusedLocal
-    def _onArrange(self, event: CommandEvent):
+    def _onArrange(self, _event: CommandEvent):
         PostEvent(dest=self._listeningWindow, event=ForceDirectedLayoutEvent())
 
     # noinspection PyUnusedLocal
-    def _onReset(self, event: CommandEvent):
+    def _onReset(self, _event: CommandEvent):
         PostEvent(dest=self._listeningWindow, event=ResetDiagramEvent())
 
     def _onMinMaxX(self, minMaxX: MinMax):
-        self._configuration.minMaxY = minMaxX
+        self._configuration.minMaxX = minMaxX
 
     def _onMinMaxY(self, minMaxY: MinMax):
         self._configuration.minMaxY = minMaxY
@@ -258,7 +272,7 @@ class DlgConfiguration(SizedDialog):
         namingPanel.SetSizerProps(expand=True, proportion=1)
 
         style:  int    = SL_HORIZONTAL | SL_AUTOTICKS | SL_VALUE_LABEL | SL_BOTTOM
-        slider: Slider = Slider(namingPanel, value=value, minValue=minValue, maxValue=maxValue, size=(250, 50), style=style)
+        slider: Slider = Slider(namingPanel, value=value, minValue=minValue, maxValue=maxValue, size=Size(250, 50), style=style)
 
         slider.SetSizerProps(expand=True, proportion=1)
 
@@ -285,12 +299,12 @@ class DlgConfiguration(SizedDialog):
 
     def _attractionForceChanged(self, event: FloatSpinEvent):
 
-        floatSpin: FloatSpin = event.GetEventObject()
+        floatSpin: FloatSpin = cast(FloatSpin, event.GetEventObject())
 
         self._configuration.attractionForce = floatSpin.GetValue()
 
     def _repulsionForceChanged(self, event: SpinEvent):
 
-        spinCtrl: SpinCtrl = event.GetEventObject()
+        spinCtrl: SpinCtrl = cast(SpinCtrl, event.GetEventObject())
 
         self._configuration.repulsionForce = spinCtrl.GetValue()

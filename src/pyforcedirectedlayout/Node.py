@@ -168,10 +168,15 @@ class Node(ABC):
         else:
             return True
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
 
-        ans: bool = False
-        if self.x == other.x and self.y == other .y and self.location == other.location:
+        ans:       bool = False
+        realOther: Node = cast(Node, other)
+
+        if self.x == realOther.x and realOther.y == realOther.y and self.location == realOther.location:
             ans = True
 
         return ans
+
+    def __repr__(self) -> str:
+        return f'Node: location: {self.location})'

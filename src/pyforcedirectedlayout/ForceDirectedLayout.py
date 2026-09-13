@@ -16,6 +16,8 @@ from random import randint
 from uuid import uuid4
 from uuid import UUID
 
+from codeallybasic.MinMax import MinMax
+
 from pyforcedirectedlayout.Configuration import Configuration
 from pyforcedirectedlayout.LayoutTypes import LayoutStatus
 from pyforcedirectedlayout.LayoutTypes import LayoutStatusCallback
@@ -193,14 +195,14 @@ class ForceDirectedLayout:
 
     def _adjustNodes(self):
         logicalBounds: Rectangle = self._getDiagramBounds()
-        # midPoint:      Point     = Point(x=logicalBounds.x + (logicalBounds.width // 2),
-        #                                  y=logicalBounds.y + (logicalBounds.height // 2)
-        #                                  )
-        midPoint:      Point     = Point(x=logicalBounds.x + logicalBounds.width,
-                                         y=logicalBounds.y + logicalBounds.height
+        midPoint:      Point     = Point(x=logicalBounds.x + (logicalBounds.width // 2),
+                                         y=logicalBounds.y + (logicalBounds.height // 2)
                                          )
+        # midPoint:      Point     = Point(x=logicalBounds.x + logicalBounds.width,
+        #                                  y=logicalBounds.y + logicalBounds.height
+        #                                  )
         for n in self._nodes:
-            node: Node = cast(Node, n)
+            node: Node = n
             node.location -= midPoint
             node.location.x += node.size.width
             node.location.y += node.size.height
@@ -232,7 +234,7 @@ class ForceDirectedLayout:
             netForce += self._calculateAttractionForce(x=currentLayoutNode, y=child, springLength=springLength)
 
         for p in self._nodes:
-            parent: Node = cast(Node, p)
+            parent: Node = p
             if currentLayoutNode in parent.connections:
                 netForce += self._calculateAttractionForce(x=currentLayoutNode, y=parent, springLength=springLength)
 
@@ -248,14 +250,12 @@ class ForceDirectedLayout:
         layout: NodeLayoutInformationList = NodeLayoutInformationList([])
         for node in self._nodes:
             diagramNode: Node = node
-            # minRandomX: int = self._configuration.minPoint.x
-            # maxRandomX: int = self._configuration.maxPoint.x
-            # minRandomY: int = self._configuration.minPoint.y
-            # maxRandomY: int = self._configuration.maxPoint.y
 
-            # diagramNode.location = Point(x=randint(minRandomX, maxRandomX), y=randint(minRandomY, maxRandomY))
-            diagramNode.location = Point(x=randint(-50, 50), y=randint(-50, 50))
-            # diagramNode.location = Point(x=randint(10, 100), y=randint(10, 100))
+            minMaxX: MinMax = self._configuration.minMaxX
+            minMaxY: MinMax = self._configuration.minMaxY
+
+            diagramNode.location = Point(x=randint(minMaxX.minValue, minMaxX.maxValue), y=randint(minMaxY.minValue, minMaxY.minValue))
+
             layoutInformation: NodeLayoutInformation = NodeLayoutInformation(node=diagramNode,
                                                                              velocity=Vector(magnitude=0, direction=0),
                                                                              nextPosition=Point(),
@@ -396,9 +396,10 @@ class ForceDirectedLayout:
 
         return int(distance)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
 
         if isinstance(other, ForceDirectedLayout) is False:
             return False
 
-        return self.id == other.id
+        otherMe: ForceDirectedLayout = other
+        return self.id == otherMe.id
