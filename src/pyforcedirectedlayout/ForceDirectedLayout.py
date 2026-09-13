@@ -401,5 +401,5 @@ class ForceDirectedLayout:
         if isinstance(other, ForceDirectedLayout) is False:
             return False
 
-        otherMe: ForceDirectedLayout = other
+        otherMe: ForceDirectedLayout = cast(ForceDirectedLayout, other)     # noqa
         return self.id == otherMe.id
