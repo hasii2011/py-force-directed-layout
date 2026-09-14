@@ -15,10 +15,10 @@ from codeallybasic.SecureConversions import SecureConversions
 
 from codeallybasic.SingletonV3 import SingletonV3
 
-X_RANGE_MIN: int = -1024
-X_RANGE_MAX: int = 1024
-Y_RANGE_MIN: int = -1024
-Y_RANGE_MAX: int = 1024
+X_RANGE_MIN: int = 0
+X_RANGE_MAX: int = 2048
+Y_RANGE_MIN: int = 0
+Y_RANGE_MAX: int = 2048
 
 arrangeProperties: ValueDescriptions = ValueDescriptions(
     {
@@ -30,10 +30,10 @@ arrangeProperties: ValueDescriptions = ValueDescriptions(
     }
 )
 
-DEFAULT_MIN_X_COORDINATE: int = -50
-DEFAULT_MAX_X_COORDINATE: int = 50
-DEFAULT_MIN_Y_COORDINATE: int = -50
-DEFAULT_MAX_Y_COORDINATE: int = 50
+DEFAULT_MIN_X_COORDINATE: int = 50
+DEFAULT_MAX_X_COORDINATE: int = 500
+DEFAULT_MIN_Y_COORDINATE: int = 50
+DEFAULT_MAX_Y_COORDINATE: int = 500
 
 DEFAULT_MIN_MAX_X: str = MinMax(minValue=DEFAULT_MIN_X_COORDINATE, maxValue=DEFAULT_MAX_X_COORDINATE).__repr__()
 DEFAULT_MIN_MAX_Y: str = MinMax(minValue=DEFAULT_MIN_Y_COORDINATE, maxValue=DEFAULT_MAX_Y_COORDINATE).__repr__()
