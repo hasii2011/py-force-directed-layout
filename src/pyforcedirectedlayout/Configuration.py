@@ -62,6 +62,7 @@ PYFDL_SECTIONS: Sections = Sections(
     }
 )
 
+MODULE_NAME: str = 'pyfdl'
 
 class Configuration(DynamicConfiguration, metaclass=SingletonV3):
 
@@ -69,4 +70,4 @@ class Configuration(DynamicConfiguration, metaclass=SingletonV3):
 
         self._logger: Logger = getLogger(__name__)
 
-        super().__init__(baseFileName='pyfdl.ini', moduleName='pydfl', sections=PYFDL_SECTIONS)
+        super().__init__(baseFileName=f'{MODULE_NAME}.ini', moduleName=f'{MODULE_NAME}', sections=PYFDL_SECTIONS)
