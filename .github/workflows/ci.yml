@@ -49,10 +49,10 @@ jobs:
             --pattern "*ubuntu2204*${PY_TAG}*.whl" \
             --dir ./wxwheels
 
-      - name: Install dependencies and pyforcedirectedlayout with test, deploy, and demo extras
+      - name: Install dependencies and pyforcedirectedlayout with test, deploy, ui, and demo extras
         run: |
           python -m pip install --upgrade pip
-          pip install --find-links ./wxwheels -e '.[test,deploy,demo]'
+          pip install --find-links ./wxwheels -e '.[test,deploy,ui,demo]'
 
       - name: Run Type Checks (mypy)
         run: |

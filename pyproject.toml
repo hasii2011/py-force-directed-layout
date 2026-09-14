@@ -29,8 +29,14 @@ deploy = [
     'build==1.2.2.post1',
 ]
 
+ui = [
+    'wxPython>=4.3.1',
+    'codeallyadvanced>=2.5.8',
+]
+
 demo = [
     'wxPython>=4.3.1',
+    'codeallyadvanced>=2.5.8',
 ]
 
 [project.urls]
