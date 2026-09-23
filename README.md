@@ -1,8 +1,8 @@
-![](https://github.com/hasii2011/code-ally-basic/blob/master/developer/agpl-license-web-badge-version-2-256x48.png "AGPL")
-
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/hasii2011/py-force-directed-layout/graphs/commit-activity)
 [![CI](https://github.com/hasii2011/py-force-directed-layout/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/hasii2011/py-force-directed-layout/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/pyforcedirectedlayout.svg)](https://badge.fury.io/py/pyforcedirectedlayout)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/hasii2011/py-force-directed-layout/graphs/commit-activity)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
+[![Made with Python](https://img.shields.io/badge/Made%20with-Python-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 
 
 # Introduction
