@@ -20,9 +20,11 @@ from wx.lib.sized_controls import SizedStaticBox
 
 from codeallybasic.MinMax import MinMax
 
-from codeallyadvanced.ui.widgets.DialSelector import DialSelector
-from codeallyadvanced.ui.widgets.DialSelector import DialSelectorParameters
+from codeallyadvanced.ui.widgets.MacDialSelector import MacDialSelector
+from codeallyadvanced.ui.widgets.MacDialSelector import MacDialSelectorParameters
+from codeallyadvanced.ui.widgets.MacDialSelector import ValueRange
 from codeallyadvanced.ui.widgets.MinMaxControl import MinMaxControl
+from codeallyadvanced.ui.widgets.MinMaxControl import MinMaxParameters
 
 from pyforcedirectedlayout.Configuration import Configuration
 from pyforcedirectedlayout.Configuration import X_RANGE_MAX
@@ -31,6 +33,18 @@ from pyforcedirectedlayout.Configuration import Y_RANGE_MAX
 from pyforcedirectedlayout.Configuration import Y_RANGE_MIN
 
 
+DAMPING_MIN:  float = 0.1
+DAMPING_MAX:  float = 1.0
+DAMPING_STEP: float = 0.1
+
+SPRING_LENGTH_MIN:  float = 100.0
+SPRING_LENGTH_MAX:  float = 500.0
+SPRING_LENGTH_STEP: float = 25.0
+
+MAX_ITERATIONS_MIN:  float = 100.0
+MAX_ITERATIONS_MAX:  float = 1000.0
+MAX_ITERATIONS_STEP: float = 20.0
+
 NODE_ATTRACTION_FORCE_MIN:       float = 0.01
 NODE_ATTRACTION_FORCE_MAX:       float = 1.0
 NODE_ATTRACTION_FORCE_INCREMENT: float = 0.05
@@ -38,7 +52,7 @@ NODE_ATTRACTION_FORCE_INCREMENT: float = 0.05
 REPULSION_FORCE_MIN: int = 500
 REPULSION_FORCE_MAX: int = 25000
 
-NO_DIAL_SELECTOR: DialSelector = cast(DialSelector, cast(object, None))
+NO_MAC_DIAL_SELECTOR: MacDialSelector = cast(MacDialSelector, cast(object, None))
 
 
 class ConfigurationPanel:
@@ -54,9 +68,9 @@ class ConfigurationPanel:
 
         self._configuration: Configuration = Configuration()
 
-        self._damping:       DialSelector = NO_DIAL_SELECTOR
-        self._springLength:  DialSelector = NO_DIAL_SELECTOR
-        self._maxIterations: DialSelector = NO_DIAL_SELECTOR
+        self._damping:       MacDialSelector = NO_MAC_DIAL_SELECTOR
+        self._springLength:  MacDialSelector = NO_MAC_DIAL_SELECTOR
+        self._maxIterations: MacDialSelector = NO_MAC_DIAL_SELECTOR
 
         self._layoutForceParameters(parentPanel=sizedPanel)
         self._layoutRandomizeParameters(parentPanel=sizedPanel)
@@ -78,32 +92,44 @@ class ConfigurationPanel:
         localPanel.SetSizerType('horizontal')
         localPanel.SetSizerProps(expand=True, proportion=2)
 
-        dampingParameters: DialSelectorParameters = DialSelectorParameters(minValue=0.1, maxValue=1.0, dialLabel='Damping',
-                                                                           formatValueCallback=self._formatDampingValue,
-                                                                           valueChangedCallback=self._dampingChanged)
-        damping: DialSelector = DialSelector(localPanel, parameters=dampingParameters)
-        damping.tickFrequency = 10
-        damping.tickValue     = 0.1
-        damping.value         = self._configuration.damping
+        dampingParameters: MacDialSelectorParameters = MacDialSelectorParameters(
+            valueChangedCallback=self._dampingChanged,
+            valueRange=ValueRange(
+                minValue=DAMPING_MIN,
+                maxValue=DAMPING_MAX,
+                initialValue=self._configuration.damping,
+                step=DAMPING_STEP
+            ),
+            dialLabel='Damping',
+            formatValueCallback=self._formatDampingValue
+        )
+        damping: MacDialSelector = MacDialSelector(localPanel, parameters=dampingParameters)
 
-        springLengthParameters: DialSelectorParameters = DialSelectorParameters(minValue=100, maxValue=500, dialLabel='Spring Length',
-                                                                                formatValueCallback=self._formatSpringLength,
-                                                                                valueChangedCallback=self._springLengthChanged)
+        springLengthParameters: MacDialSelectorParameters = MacDialSelectorParameters(
+            valueChangedCallback=self._springLengthChanged,
+            valueRange=ValueRange(
+                minValue=SPRING_LENGTH_MIN,
+                maxValue=SPRING_LENGTH_MAX,
+                initialValue=float(self._configuration.springLength),
+                step=SPRING_LENGTH_STEP
+            ),
+            dialLabel='Spring Length',
+            formatValueCallback=self._formatSpringLength
+        )
+        springLength: MacDialSelector = MacDialSelector(localPanel, parameters=springLengthParameters)
 
-        springLength: DialSelector = DialSelector(localPanel, parameters=springLengthParameters)
-        springLength.tickFrequency = 20
-        springLength.tickValue     = 25
-        springLength.value         = self._configuration.springLength
-
-        maxIterationsParameters: DialSelectorParameters = DialSelectorParameters(minValue=100,
-                                                                                 maxValue=1000,
-                                                                                 dialLabel='Maximum Iterations',
-                                                                                 formatValueCallback=self._formatMaxIterations,
-                                                                                 valueChangedCallback=self._maxIterationsChanged)
-        maxIterations: DialSelector = DialSelector(localPanel, parameters=maxIterationsParameters)
-        maxIterations.tickFrequency = 50
-        maxIterations.tickValue     = 20
-        maxIterations.value         = self._configuration.maxIterations
+        maxIterationsParameters: MacDialSelectorParameters = MacDialSelectorParameters(
+            valueChangedCallback=self._maxIterationsChanged,
+            valueRange=ValueRange(
+                minValue=MAX_ITERATIONS_MIN,
+                maxValue=MAX_ITERATIONS_MAX,
+                initialValue=float(self._configuration.maxIterations),
+                step=MAX_ITERATIONS_STEP
+            ),
+            dialLabel='Maximum Iterations',
+            formatValueCallback=self._formatMaxIterations
+        )
+        maxIterations: MacDialSelector = MacDialSelector(localPanel, parameters=maxIterationsParameters)
 
         self._damping       = damping
         self._springLength  = springLength
@@ -119,16 +145,18 @@ class ConfigurationPanel:
         horizontalPanel.SetSizerType('horizontal')
         horizontalPanel.SetSizerProps(expand=True, proportion=1)
 
-        minMaxX: MinMaxControl = MinMaxControl(sizedPanel=horizontalPanel, displayText='Minimum/Maximum X Value',
-                                               minValue=X_RANGE_MIN, maxValue=X_RANGE_MAX,
-                                               valueChangedCallback=self._onMinMaxX,
-                                               setControlsSize=False)
+        minMaxXParameters: MinMaxParameters = MinMaxParameters(caption='Minimum/Maximum X Value',
+                                                               minValue=X_RANGE_MIN, maxValue=X_RANGE_MAX,
+                                                               valueChangedCallback=self._onMinMaxX,
+                                                               proportion=1)
+        minMaxX: MinMaxControl = MinMaxControl(parent=horizontalPanel, parameters=minMaxXParameters)
         minMaxX.minMax = self._configuration.minMaxX
 
-        minMaxY: MinMaxControl = MinMaxControl(sizedPanel=horizontalPanel, displayText='Minimum/Maximum Y Value',
-                                               minValue=Y_RANGE_MIN, maxValue=Y_RANGE_MAX,
-                                               valueChangedCallback=self._onMinMaxY,
-                                               setControlsSize=False)
+        minMaxYParameters: MinMaxParameters = MinMaxParameters(caption='Minimum/Maximum Y Value',
+                                                               minValue=Y_RANGE_MIN, maxValue=Y_RANGE_MAX,
+                                                               valueChangedCallback=self._onMinMaxY,
+                                                               proportion=1)
+        minMaxY: MinMaxControl = MinMaxControl(parent=horizontalPanel, parameters=minMaxYParameters)
         minMaxY.minMax = self._configuration.minMaxY
 
     def _layoutAlgorithmParameters(self, parentPanel: SizedPanel):
@@ -164,20 +192,20 @@ class ConfigurationPanel:
 
         return f'{valueToFormat:.2f}'
 
-    def _formatSpringLength(self, valueToFormat: int):
-        return f'{valueToFormat}'
+    def _formatSpringLength(self, valueToFormat: float):
+        return f'{int(valueToFormat)}'
 
-    def _formatMaxIterations(self, valueToFormat: int):
-        return f'{valueToFormat}'
+    def _formatMaxIterations(self, valueToFormat: float):
+        return f'{int(valueToFormat)}'
 
-    def _dampingChanged(self, newValue: int):
+    def _dampingChanged(self, newValue: float):
         self._configuration.damping = newValue
 
-    def _springLengthChanged(self, newValue: int):
-        self._configuration.springLength = newValue
+    def _springLengthChanged(self, newValue: float):
+        self._configuration.springLength = int(newValue)
 
-    def _maxIterationsChanged(self, newValue: int):
-        self._configuration.maxIterations = newValue
+    def _maxIterationsChanged(self, newValue: float):
+        self._configuration.maxIterations = int(newValue)
 
     def _onMinMaxX(self, minMaxX: MinMax):
         self._configuration.minMaxX = minMaxX

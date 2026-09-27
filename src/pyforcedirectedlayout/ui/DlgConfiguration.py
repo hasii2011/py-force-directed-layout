@@ -29,7 +29,7 @@ class DlgConfiguration(SizedDialog):
     def __init__(self, parent: Window):
 
         style:   int  = DEFAULT_DIALOG_STYLE
-        dlgSize: Size = Size(470, 540)
+        dlgSize: Size = Size(640, 520)
 
         super().__init__(parent, title='Force Directed Configuration', size=dlgSize, style=style)
 

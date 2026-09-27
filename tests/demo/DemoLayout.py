@@ -39,7 +39,7 @@ from tests.demo.DemoTypes import ResetDiagramEvent
 
 from tests.demo.DiagramFrame import DiagramFrame
 from tests.demo.DiagramGenerator import DiagramGenerator
-from tests.demo.DlgConfiguration import DlgConfiguration
+from pyforcedirectedlayout.ui.DlgConfiguration import DlgConfiguration
 
 FRAME_WIDTH:  int = 1280
 FRAME_HEIGHT: int = 800
